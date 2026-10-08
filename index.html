@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>L'École Amusante 🎓</title>
+  
+  <!-- Librairie de confettis -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* ==========================================
+       STYLE GLOBAL & THÈMES DYNAMIQUES 🎨
+       ========================================== */
+    * {
+      box-sizing: border-box;
+      font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
+      user-select: none;
+    }
+
+    :root {
+      --bg-color: #f0f8ff;
+      --header-bg: #ff6b6b;
+      --primary-color: #4ecdc4;
+      --accent-color: #ffd166;
+      --text-color: #2b3a42;
+      --card-bg: #ffffff;
+      --btn-success: #06d6a0;
+      --font-family: 'Comic Sans MS', sans-serif;
+    }
+
+    body.theme-princesse {
+      --bg-color: #fff0f5;
+      --header-bg: #ff69b4;
+      --primary-color: #ffb6c1;
+      --accent-color: #ffd700;
+      --text-color: #4a0e2e;
+      --card-bg: #ffffff;
+      --btn-success: #ff1493;
+    }
+
+    body.theme-brawlstars {
+      --bg-color: #1a1a2e;
+      --header-bg: #e63946;
+      --primary-color: #ffb703;
+      --accent-color: #00b4d8;
+      --text-color: #ffffff;
+      --card-bg: #16213e;
+      --btn-success: #ffb703;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      overflow-x: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .school-header {
+      background: var(--header-bg);
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo { font-size: 1.4rem; margin: 0; }
+
+    .user-badge {
+      background: var(--accent-color);
+      color: #2b3a42;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .btn-header {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 5px;
+    }
+
+    .screen {
+      display: none;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .screen.active {
+      display: block;
+      animation: popIn 0.3s ease-out;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .login-card, .admin-card {
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 20px;
+      border: 3px solid var(--primary-color);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      margin-top: 20px;
+    }
+
+    .form-group { margin-bottom: 15px; text-align: left; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 12px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 1.1rem;
+    }
+
+    .menu-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px;
+    }
+
+    .card-game {
+      background: var(--card-bg); border: 4px solid var(--primary-color);
+      border-radius: 20px; padding: 25px 15px; cursor: pointer; transition: all 0.2s;
+    }
+    .card-game:hover { transform: translateY(-4px); }
+    .card-game .icon { font-size: 3rem; display: block; margin-bottom: 10px; }
+    .card-game h3 { margin: 5px 0; color: var(--header-bg); font-size: 1.3rem; }
+
+    .theme-selector { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
+    .theme-btn {
+      padding: 10px 15px; border-radius: 15px; border: 2px solid #ccc;
+      cursor: pointer; font-weight: bold; background: white; color: #333;
+    }
+    .theme-btn.active { border-color: var(--header-bg); background: var(--header-bg); color: white; }
+
+    .input-mode-toggle { display: flex; justify-content: center; gap: 10px; margin: 15px 0; flex-wrap: wrap; }
+    .toggle-btn {
+      background: #e2e8f0; border: 2px solid #cbd5e1; padding: 8px 16px;
+      border-radius: 20px; font-weight: bold; cursor: pointer;
+    }
+    .toggle-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+
+    .calligraphy-keyboard-input {
+      font-size: 2.5rem; text-align: center; width: 100%; max-width: 450px;
+      padding: 12px; border: 4px dashed var(--primary-color); border-radius: 16px;
+      outline: none; color: #2b3a42; background: white; letter-spacing: 2px;
+    }
+
+    .canvas-container {
+      border: 4px dashed var(--primary-color); border-radius: 16px;
+      display: inline-block; background: #ffffff; margin: 15px 0; touch-action: none;
+      position: relative; max-width: 100%;
+    }
+
+    .canvas-container.blackboard {
+      background: #2b3a42; border-color: #1a252f; box-shadow: inset 0 0 15px rgba(0,0,0,0.6);
+    }
+
+    canvas { display: block; border-radius: 12px; cursor: crosshair; max-width: 100%; }
+
+    .fullscreen-modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: #1a252f; z-index: 1000; flex-direction: column;
+      align-items: center; justify-content: space-between; padding: 15px;
+    }
+    .fullscreen-modal.active { display: flex; }
+
+    .fullscreen-header { width: 100%; display: flex; justify-content: space-between; align-items: center; color: white; }
+    .fullscreen-controls {
+      display: flex; gap: 10px; align-items: center; background: rgba(255,255,255,0.1);
+      padding: 10px 20px; border-radius: 20px; margin-bottom: 10px; flex-wrap: wrap;
+    }
+
+    .vertical-math { font-size: 2.8rem; font-weight: bold; color: var(--header-bg); letter-spacing: 2px; }
+    .math-input {
+      font-size: 2.2rem; width: 180px; text-align: center;
+      border: 3px solid var(--primary-color); border-radius: 12px; padding: 5px; outline: none;
+    }
+
+    .controls { display: flex; justify-content: center; gap: 12px; margin-top: 15px; flex-wrap: wrap; }
+
+    button.btn { padding: 12px 20px; font-size: 1rem; font-weight: bold; border: none; border-radius: 14px; cursor: pointer; }
+    .btn-audio {
+      background: #3a86ff; color: white; font-size: 1.1rem; padding: 10px 18px;
+      border-radius: 20px; border: none; cursor: pointer; box-shadow: 0 4px 0 #1d4ed8; margin-bottom: 10px;
+    }
+
+    .btn-success { background: var(--btn-success); color: white; }
+    .btn-action { background: var(--accent-color); color: #2b3a42; }
+    .btn-back { background: #cbd5e1; color: #334155; margin-bottom: 15px; }
+
+    .highlight { color: var(--header-bg); font-size: 2.2rem; text-decoration: underline; }
+
+    .progress-bar-box {
+      font-weight: bold; color: var(--primary-color); font-size: 1.1rem; margin: 10px 0;
+    }
+
+    .user-list-admin { list-style: none; padding: 0; text-align: left; }
+    .user-list-admin li {
+      background: rgba(0,0,0,0.05); padding: 10px; border-radius: 8px;
+      margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- EN-TÊTE -->
+  <header class="school-header">
+    <h1 class="logo">✏️ École Amusante</h1>
+    <div id="header-user-info" class="user-badge" style="display: none;">
+      <span id="user-name">Élève</span> | Niv. <span id="user-level">1</span> ⭐ <span id="user-xp">0</span> XP
+    </div>
+    <div>
+      <button onclick="showScreen('admin-screen')" class="btn-header">⚙️ Admin</button>
+      <button id="btn-logout" onclick="logout()" class="btn-header" style="display: none;">🚪</button>
+    </div>
+  </header>
+
+  <!-- ÉCRAN DE CONNEXION -->
+  <section id="login-screen" class="screen active">
+    <h2>👋 Bienvenue à l'École !</h2>
+    <p>Choisis ton nom pour commencer :</p>
+
+    <div class="login-card">
+      <form onsubmit="event.preventDefault(); login();">
+        <div class="form-group">
+          <label for="login-user-select">👤 Élève :</label>
+          <select id="login-user-select" required>
+            <option value="">Chargement des élèves...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">🔑 Mot de passe :</label>
+          <input type="password" id="login-password" placeholder="Ex: 123" autocomplete="current-password" required>
+        </div>
+
+        <button type="submit" class="btn btn-success" style="width: 100%; font-size: 1.2rem;">🚀 Se connecter</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ACCUEIL / MENU PRINCIPAL -->
+  <main id="main-menu" class="screen">
+    <h2>Choisis ton thème préféré ! 🎨</h2>
+    <div class="theme-selector">
+      <button class="theme-btn active" onclick="setTheme('classique')">🎨 Classique</button>
+      <button class="theme-btn" onclick="setTheme('princesse')">👑 Princesse</button>
+      <button class="theme-btn" onclick="setTheme('brawlstars')">💥 Brawl Stars</button>
+    </div>
+
+    <h2>Choisis ton jeu ! 🚀</h2>
+    <div class="menu-grid">
+      <div class="card-game" onclick="showScreen('calligraphy-setup-screen')">
+        <span class="icon">✍️</span>
+        <h3>Calligraphie</h3>
+        <p>Mots de la semaine & Dictée</p>
+      </div>
+      <div class="card-game" onclick="startMath()">
+        <span class="icon">➖</span>
+        <h3>Soustraction</h3>
+        <p>Calculs avec zone de brouillon</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ÉCRAN DE PRÉPARATION CALLIGRAPHIE -->
+  <section id="calligraphy-setup-screen" class="screen">
+    <button onclick="showScreen('main-menu')" class="btn btn-back">⬅️ Menu Principal</button>
+    <h2>✍️ Configuration de la Calligraphie</h2>
+
+    <div class="admin-card">
+      <div class="form-group">
+        <label>📚 Choisis la liste de mots :</label>
+        <select id="calligraphy-list-select">
+          <!-- Chargé dynamiquement -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>🎮 Mode de jeu :</label>
+        <select id="calligraphy-mode-select">
+          <option value="copy">👁️ Copier le mot (Entraînement)</option>
+          <option value="dictation">🙈 Dictée / Écoute (Mot caché)</option>
+        </select>
+      </div>
+
+      <button onclick="launchCalligraphyGame()" class="btn btn-success" style="width: 100%; font-size: 1.2rem; margin-top: 10px;">▶️ Commencer la partie</button>
+    </div>
+  </section>
+
+  <!-- MODE CALLIGRAPHIE JEU -->
+  <section id="calligraphy-screen" class="screen">
+    <button onclick="showScreen('calligraphy-setup-screen')" class="btn btn-back">⬅️ Abandonner</button>
+
+    <div class="progress-bar-box">
+      📊 Mots restants : <span id="remaining-words-count">0</span>
+    </div>
+    
+    <div style="margin-bottom: 10px;">
+      <button onclick="speakCurrentWord()" class="btn-audio">🔊 Écouter le mot</button>
+    </div>
+
+    <h2>Mot à écrire : <span id="target-word" class="highlight">---</span></h2>
+
+    <div class="input-mode-toggle">
+      <button id="toggle-keyboard" class="toggle-btn active" onclick="switchCalligraphyInputMode('keyboard')">⌨️ Clavier</button>
+      <button id="toggle-draw" class="toggle-btn" onclick="switchCalligraphyInputMode('draw')">✏️ Dessin / Stylet</button>
+    </div>
+
+    <div id="calligraphy-keyboard-box" style="margin: 20px 0;">
+      <input type="text" id="calligraphy-input" class="calligraphy-keyboard-input" placeholder="Tape le mot ici..." autocomplete="off">
+    </div>
+
+    <div id="calligraphy-canvas-box" class="canvas-container" style="display: none;">
+      <canvas id="calligraphy-canvas" width="450" height="250"></canvas>
+    </div>
+
+    <div class="controls">
+      <button id="btn-clear-calligraphy" onclick="clearCalligraphy()" class="btn btn-action" style="display: none;">🧹 Effacer</button>
+      <button onclick="skipWord()" class="btn btn-action">⏩ Passer pour le moment</button>
+      <button onclick="validateCalligraphy()" class="btn btn-success">✅ Valider (+10 XP)</button>
+    </div>
+  </section>
+
+  <!-- MODE SOUSTRACTION -->
+  <section id="math-screen" class="screen">
+    <button onclick="showScreen('main-menu')" class="btn btn-back">⬅️ Menu Principal</button>
+    
+    <div style="margin-bottom: 15px;">
+      <label><b>Niveau :</b> </label>
+      <select id="math-diff" style="padding: 5px; font-weight: bold;" onchange="generateMathProblem()">
+        <option value="dizaines">Dizaines (10 à 99)</option>
+        <option value="centaines">Centaines (100 à 999)</option>
+        <option value="milliers">Milliers (1000 à 9999)</option>
+      </select>
+    </div>
+
+    <div style="background: white; padding: 15px; border-radius: 16px; border: 3px solid var(--accent-color); display: inline-block;">
+      <div id="math-problem" class="vertical-math">-- - -- =</div>
+      <input type="number" id="math-answer" placeholder="?" class="math-input">
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 600px; margin: 15px auto 5px auto;">
+      <h3>📝 Zone de brouillon :</h3>
+      <button onclick="openFullscreenScratch()" class="btn btn-action">🔍 Grand Écran / Fullscreen</button>
+    </div>
+
+    <div class="canvas-container blackboard">
+      <canvas id="scratch-canvas" width="600" height="350"></canvas>
+    </div>
+
+    <div class="controls">
+      <button onclick="clearCanvas('scratch-canvas')" class="btn btn-action">🧹 Effacer le brouillon</button>
+      <button onclick="validateMath()" class="btn btn-success">🎯 Valider (+15 XP)</button>
+    </div>
+  </section>
+
+  <!-- MODAL FULLSCREEN BROUILLON MULTI-PAGES -->
+  <div id="fullscreen-modal" class="fullscreen-modal">
+    <div class="fullscreen-header">
+      <span style="font-size: 1.2rem; font-weight: bold;">📝 Tableau de Brouillon Fullscreen</span>
+      <button onclick="closeFullscreenScratch()" class="btn btn-back" style="margin: 0;">❌ Fermer</button>
+    </div>
+
+    <div class="canvas-container blackboard" style="margin: 10px 0; flex: 1; width: 100%; display: flex; justify-content: center; align-items: center;">
+      <canvas id="fullscreen-scratch-canvas"></canvas>
+    </div>
+
+    <div class="fullscreen-controls">
+      <button onclick="prevScratchPage()" class="btn btn-action">◀️ Page Préc.</button>
+      <span style="color: white; font-weight: bold;">Page <span id="scratch-page-num">1</span> / <span id="scratch-page-total">1</span></span>
+      <button onclick="nextScratchPage()" class="btn btn-action">▶️ Page Suiv.</button>
+      <button onclick="addScratchPage()" class="btn btn-success">📄 Page +</button>
+      <button onclick="clearCurrentFullscreenPage()" class="btn btn-action">🧹 Effacer cette page</button>
+    </div>
+  </div>
+
+  <!-- MODE ADMIN -->
+  <section id="admin-screen" class="screen">
+    <button onclick="showScreen('main-menu')" class="btn btn-back">⬅️ Menu Principal</button>
+    <h2>⚙️ Panneau Administrateur</h2>
+
+    <!-- Gestion des Mots et des Listes -->
+    <div class="admin-card">
+      <h3>📚 Gestion des Listes de Mots</h3>
+      
+      <div class="form-group">
+        <label>Liste active :</label>
+        <select id="admin-list-select" onchange="renderAdminListWords()">
+          <!-- Chargé dynamiquement -->
+        </select>
+      </div>
+
+      <div class="controls" style="margin-bottom: 15px;">
+        <button onclick="promptCreateList()" class="btn btn-success">➕ Créer une Liste</button>
+        <button onclick="promptRenameList()" class="btn btn-action">✏️ Renommer</button>
+        <button onclick="deleteCurrentList()" class="btn" style="background:#ff4757; color:white;">🗑️ Supprimer la Liste</button>
+      </div>
+
+      <h4>Mots de la liste sélectionnée :</h4>
+      <div class="form-group" style="display: flex; gap: 10px;">
+        <input type="text" id="admin-new-word-input" placeholder="Ajouter un mot...">
+        <button onclick="addWordToCurrentList()" class="btn btn-success">Ajouter</button>
+      </div>
+
+      <ul id="admin-words-ul" class="user-list-admin"></ul>
+    </div>
+
+    <!-- Phrases d'échec / encouragements -->
+    <div class="admin-card" style="margin-top: 20px;">
+      <h3>💬 Phrases dites lors d'un échec</h3>
+      <div class="form-group" style="display: flex; gap: 10px;">
+        <input type="text" id="admin-new-phrase-input" placeholder="Ex: Dommage ! Regarde bien l'orthographe...">
+        <button onclick="addFailurePhrase()" class="btn btn-success">Ajouter</button>
+      </div>
+      <ul id="admin-phrases-ul" class="user-list-admin"></ul>
+    </div>
+
+    <!-- Gestion Élèves -->
+    <div class="admin-card" style="margin-top: 20px;">
+      <h3>👥 Ajouter / Modifier un Élève</h3>
+      <div class="form-group"><label>Nom :</label><input type="text" id="admin-user-name" placeholder="Nom de l'élève"></div>
+      <div class="form-group"><label>Mot de passe / PIN :</label><input type="text" id="admin-user-pin" value="123"></div>
+      <div class="form-group"><label>Niveau :</label><input type="number" id="admin-user-level" value="1"></div>
+      <div class="form-group"><label>Points d'XP :</label><input type="number" id="admin-user-xp" value="0"></div>
+      <button onclick="saveStudentAdmin()" class="btn btn-success" style="width: 100%;">💾 Sauvegarder l'Élève</button>
+
+      <h4>Liste des Élèves enregistrés :</h4>
+      <ul id="admin-users-list" class="user-list-admin"></ul>
+    </div>
+  </section>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzvnpPtigFMouPGLFQNlxg6ZvvIK-zLAbDUqMIsncBSHTzKuIOeSWfOlty0tXJ_-Sex-A/exec";
+
+    let usersList = [
+      { id: "1", nom: "Benjamin", pin: "123", niveau: 1, xp: 0, theme: "classique", mots_difficultes: [] },
+      { id: "2", nom: "Héliane", pin: "123", niveau: 1, xp: 0, theme: "classique", mots_difficultes: [] }
+    ];
+
+    let wordListsData = {
+      "Semaine 1": ["âge", "argent", "danger", "gagner", "garder", "genre"]
+    };
+
+    let failurePhrases = [
+      "Oups ! Regarde bien le mot et réessaie !",
+      "Presque ! Tu vas y arriver au prochain coup !",
+      "Ne t'inquiète pas, la pratique rend parfait !"
+    ];
+
+    // GESTION DU JEU CALLIGRAPHIE (BOUCLE D'APPRENTISSAGE)
+    let pendingGameWords = [];  // Mots restant dans la boucle actuelle
+    let retryGameWords = [];    // Mots échoués à refaire au prochain tour
+    let currentWordIndex = 0;
+
+    let currentUser = null;
+    let currentMathAnswer = 0;
+    let currentCalligraphyInputMode = "keyboard";
+    let isDictationMode = false;
+
+    let scratchPages = [null];
+    let currentScratchPage = 0;
+
+    window.onload = () => {
+      initCanvas("calligraphy-canvas", "#2b3a42", 5);
+      initCanvas("scratch-canvas", "#ffffff", 3);
+      initCanvas("fullscreen-scratch-canvas", "#ffffff", 4);
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.getVoices();
+      }
+
+      loadDataFromSheets();
+
+      const callInput = document.getElementById('calligraphy-input');
+      if (callInput) {
+        callInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') validateCalligraphy();
+        });
+      }
+    };
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const sc = document.getElementById(screenId);
+      if (sc) sc.classList.add('active');
+    }
+
+    // Synthèse vocale garantie en français
+    function speakText(text) {
+      if (!text) return;
+
+      let spokeLocally = false;
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const voices = window.speechSynthesis.getVoices();
+        const frVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('fr'));
+
+        if (frVoice) {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.voice = frVoice;
+          utterance.lang = frVoice.lang;
+          utterance.rate = 0.85;
+          window.speechSynthesis.speak(utterance);
+          spokeLocally = true;
+        }
+      }
+
+      if (!spokeLocally) {
+        const cleanText = encodeURIComponent(text.trim());
+        const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=fr&client=tw-ob&q=${cleanText}`;
+        const audio = new Audio(audioUrl);
+        audio.play().catch(() => {});
+      }
+    }
+
+    function speakCurrentWord() {
+      const word = pendingGameWords[currentWordIndex] || "";
+      speakText(word);
+    }
+
+    // Chargement des données Google Sheets
+    async function loadDataFromSheets() {
+      try {
+        const response = await fetch(`${API_URL}?action=getData`, { method: 'GET', redirect: 'follow' });
+        const data = await response.json();
+
+        if (data && data.users && data.users.length > 0) {
+          usersList = data.users.map(u => ({
+            id: (u.id || u.ID || Date.now()).toString(),
+            nom: u.nom || u.Nom || "Élève",
+            pin: (u.pin || u.Pin || "123").toString(),
+            niveau: parseInt(u.niveau || u.Niveau || 1) || 1,
+            xp: parseInt(u.xp || u.XP || 0) || 0,
+            theme: u.theme || u.Theme || "classique",
+            mots_difficultes: typeof u.mots_difficultes === 'string' ? JSON.parse(u.mots_difficultes || "[]") : (u.mots_difficultes || [])
+          }));
+        }
+
+        if (data && data.words && data.words.length > 0) {
+          wordListsData = {};
+          data.words.forEach(w => {
+            let listName = w.Semaine || w.semaine || "Semaine 1";
+            let wordVal = w.Mot || w.mot || w.MOT;
+            if (wordVal) {
+              if (!wordListsData[listName]) wordListsData[listName] = [];
+              wordListsData[listName].push(wordVal);
+            }
+          });
+        }
+
+        if (data && data.phrases && data.phrases.length > 0) {
+          failurePhrases = data.phrases.map(p => p.phrase || p.Phrase).filter(Boolean);
+        }
+      } catch (err) {
+        console.warn("Chargement local :", err);
+      }
+      populateLoginSelect();
+      populateCalligraphyListSelect();
+      renderAdminAll();
+    }
+
+    function populateLoginSelect() {
+      const select = document.getElementById('login-user-select');
+      if (!select) return;
+      select.innerHTML = '<option value="">-- Choisis ton nom --</option>';
+      usersList.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.id;
+        opt.innerText = u.nom;
+        select.appendChild(opt);
+      });
+    }
+
+    function populateCalligraphyListSelect() {
+      const select = document.getElementById('calligraphy-list-select');
+      if (!select) return;
+      select.innerHTML = '';
+
+      if (currentUser && currentUser.mots_difficultes && currentUser.mots_difficultes.length > 0) {
+        const optDiff = document.createElement('option');
+        optDiff.value = "__DIFFICULTIES__";
+        optDiff.innerText = `⚠️ Mes Mots en Difficulté (${currentUser.mots_difficultes.length})`;
+        select.appendChild(optDiff);
+      }
+
+      Object.keys(wordListsData).forEach(listName => {
+        const opt = document.createElement('option');
+        opt.value = listName;
+        opt.innerText = `${listName} (${wordListsData[listName].length} mots)`;
+        select.appendChild(opt);
+      });
+    }
+
+    function login() {
+      const selectedId = document.getElementById('login-user-select').value;
+      const pass = document.getElementById('login-password').value;
+
+      const user = usersList.find(u => u.id == selectedId);
+      if (!user) return alert("Choisis ton nom dans la liste !");
+      if (user.pin && user.pin != pass) return alert("Mot de passe incorrect ! (Par défaut: 123)");
+
+      currentUser = user;
+      setTheme(currentUser.theme || 'classique');
+      updateUserHeaderUI();
+      populateCalligraphyListSelect();
+
+      document.getElementById('header-user-info').style.display = 'block';
+      document.getElementById('btn-logout').style.display = 'inline-block';
+      showScreen('main-menu');
+    }
+
+    function logout() {
+      currentUser = null;
+      document.getElementById('header-user-info').style.display = 'none';
+      document.getElementById('btn-logout').style.display = 'none';
+      showScreen('login-screen');
+    }
+
+    function updateUserHeaderUI() {
+      if (!currentUser) return;
+      document.getElementById('user-name').innerText = currentUser.nom;
+      document.getElementById('user-level').innerText = currentUser.niveau || 1;
+      document.getElementById('user-xp').innerText = currentUser.xp || 0;
+    }
+
+    function setTheme(themeName) {
+      document.body.className = '';
+      if (themeName !== 'classique') document.body.classList.add(`theme-${themeName}`);
+      if (currentUser) {
+        currentUser.theme = themeName;
+        syncUserToSheets();
+      }
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText.toLowerCase().includes(themeName));
+      });
+    }
+
+    // CALLIGRAPHIE : Lancement & Gestion de la file d'attente
+    function launchCalligraphyGame() {
+      const listKey = document.getElementById('calligraphy-list-select').value;
+      const modeKey = document.getElementById('calligraphy-mode-select').value;
+
+      isDictationMode = (modeKey === 'dictation');
+
+      if (listKey === "__DIFFICULTIES__") {
+        pendingGameWords = [...currentUser.mots_difficultes];
+      } else {
+        pendingGameWords = [...(wordListsData[listKey] || [])];
+      }
+
+      if (pendingGameWords.length === 0) {
+        alert("Cette liste ne contient aucun mot pour le moment !");
+        return;
+      }
+
+      retryGameWords = [];
+      currentWordIndex = 0;
+      showScreen('calligraphy-screen');
+      loadCalligraphyWord();
+    }
+
+    function loadCalligraphyWord() {
+      if (pendingGameWords.length === 0) {
+        // Si la liste actuelle est terminée mais qu'il y avait des mots manqués
+        if (retryGameWords.length > 0) {
+          speakText("On réessaie maintenant les mots qui ont posé problème !");
+          alert("🔄 Bravo ! Recommençons maintenant les mots à réviser !");
+          pendingGameWords = [...retryGameWords];
+          retryGameWords = [];
+          currentWordIndex = 0;
+        } else {
+          // VICTOIRE TOTALE
+          confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+          speakText("Félicitations ! Tu as réussi tous les mots de la liste !");
+          alert("🏆 CHAMPION ! Tu as réussi tous les mots de cette liste !");
+          showScreen('main-menu');
+          return;
+        }
+      }
+
+      if (currentWordIndex >= pendingGameWords.length) {
+        currentWordIndex = 0;
+      }
+
+      const targetWordElem = document.getElementById('target-word');
+      const countElem = document.getElementById('remaining-words-count');
+      const currentWord = pendingGameWords[currentWordIndex];
+
+      if (countElem) countElem.innerText = pendingGameWords.length;
+
+      if (isDictationMode) {
+        targetWordElem.innerText = "❓ (Mot caché - Écoute bien !)";
+      } else {
+        targetWordElem.innerText = currentWord;
+      }
+
+      speakCurrentWord();
+      clearCalligraphy();
+    }
+
+    function switchCalligraphyInputMode(mode) {
+      currentCalligraphyInputMode = mode;
+      document.getElementById('calligraphy-keyboard-box').style.display = mode === 'keyboard' ? 'block' : 'none';
+      document.getElementById('calligraphy-canvas-box').style.display = mode === 'draw' ? 'inline-block' : 'none';
+      document.getElementById('btn-clear-calligraphy').style.display = mode === 'draw' ? 'inline-block' : 'none';
+      
+      document.getElementById('toggle-keyboard').classList.toggle('active', mode === 'keyboard');
+      document.getElementById('toggle-draw').classList.toggle('active', mode === 'draw');
+    }
+
+    function clearCalligraphy() {
+      document.getElementById('calligraphy-input').value = '';
+      clearCanvas('calligraphy-canvas');
+    }
+
+    function skipWord() {
+      const currentWord = pendingGameWords[currentWordIndex];
+      if (!retryGameWords.includes(currentWord)) {
+        retryGameWords.push(currentWord);
+      }
+      // Passe au suivant sans valider
+      pendingGameWords.splice(currentWordIndex, 1);
+      loadCalligraphyWord();
+    }
+
+    function validateCalligraphy() {
+      const targetWord = pendingGameWords[currentWordIndex];
+
+      if (currentCalligraphyInputMode === 'keyboard') {
+        const userInput = document.getElementById('calligraphy-input').value.trim();
+        
+        if (userInput.toLowerCase() === targetWord.toLowerCase()) {
+          confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
+          alert("🎉 Bravo ! Mot bien écrit !");
+          
+          // Retire le mot des mots en difficulté s'il y était
+          if (currentUser.mots_difficultes.includes(targetWord)) {
+            currentUser.mots_difficultes = currentUser.mots_difficultes.filter(w => w !== targetWord);
+          }
+
+          addXP(10);
+
+          // ENLÈVE LE MOT RÉUSSI DE LA LISTE DE LA PARTIE EN COURS
+          pendingGameWords.splice(currentWordIndex, 1);
+          loadCalligraphyWord();
+        } else {
+          // ÉCHEC
+          if (!currentUser.mots_difficultes.includes(targetWord)) {
+            currentUser.mots_difficultes.push(targetWord);
+          }
+          if (!retryGameWords.includes(targetWord)) {
+            retryGameWords.push(targetWord);
+          }
+
+          const randomPhrase = failurePhrases[Math.floor(Math.random() * failurePhrases.length)] || "Réessaie encore !";
+          speakText(randomPhrase);
+          alert(`❌ ${randomPhrase}\nLe mot était : "${targetWord}"`);
+          syncUserToSheets();
+
+          // Retire le mot échoué de cette boucle et le met dans les mots à revoir plus tard
+          pendingGameWords.splice(currentWordIndex, 1);
+          loadCalligraphyWord();
+        }
+      } else {
+        confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
+        addXP(10);
+        pendingGameWords.splice(currentWordIndex, 1);
+        loadCalligraphyWord();
+      }
+    }
+
+    // CANVAS & BROUILLON
+    function initCanvas(id, color, strokeWidth) {
+      const canvas = document.getElementById(id);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+
+      const getPos = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+      };
+
+      const startDraw = (e) => { drawing = true; ctx.beginPath(); draw(e); };
+      const stopDraw = () => { drawing = false; ctx.beginPath(); };
+      const draw = (e) => {
+        if (!drawing) return;
+        const pos = getPos(e);
+        ctx.lineWidth = strokeWidth; ctx.lineCap = 'round'; ctx.strokeStyle = color;
+        ctx.lineTo(pos.x, pos.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
+      };
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mouseup', stopDraw);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('touchstart', startDraw, { passive: true });
+      canvas.addEventListener('touchend', stopDraw);
+      canvas.addEventListener('touchmove', draw, { passive: true });
+    }
+
+    function clearCanvas(id) {
+      const canvas = document.getElementById(id);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function openFullscreenScratch() {
+      const modal = document.getElementById('fullscreen-modal');
+      if (modal) modal.classList.add('active');
+      const canvas = document.getElementById('fullscreen-scratch-canvas');
+      if (canvas) { canvas.width = window.innerWidth - 40; canvas.height = window.innerHeight - 150; }
+      loadScratchPage(currentScratchPage);
+    }
+
+    function closeFullscreenScratch() {
+      saveCurrentScratchPage();
+      document.getElementById('fullscreen-modal').classList.remove('active');
+    }
+
+    function saveCurrentScratchPage() {
+      const canvas = document.getElementById('fullscreen-scratch-canvas');
+      if (canvas) scratchPages[currentScratchPage] = canvas.toDataURL();
+    }
+
+    function loadScratchPage(pageIndex) {
+      const canvas = document.getElementById('fullscreen-scratch-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (scratchPages[pageIndex]) {
+        const img = new Image();
+        img.onload = () => ctx.drawImage(img, 0, 0);
+        img.src = scratchPages[pageIndex];
+      }
+      document.getElementById('scratch-page-num').innerText = pageIndex + 1;
+      document.getElementById('scratch-page-total').innerText = scratchPages.length;
+    }
+
+    function addScratchPage() { saveCurrentScratchPage(); scratchPages.push(null); currentScratchPage = scratchPages.length - 1; loadScratchPage(currentScratchPage); }
+    function prevScratchPage() { if (currentScratchPage > 0) { saveCurrentScratchPage(); currentScratchPage--; loadScratchPage(currentScratchPage); } }
+    function nextScratchPage() { if (currentScratchPage < scratchPages.length - 1) { saveCurrentScratchPage(); currentScratchPage++; loadScratchPage(currentScratchPage); } }
+    function clearCurrentFullscreenPage() { clearCanvas('fullscreen-scratch-canvas'); scratchPages[currentScratchPage] = null; }
+
+    // SOUSTRACTION
+    function startMath() { showScreen('math-screen'); generateMathProblem(); }
+    function generateMathProblem() {
+      const diff = document.getElementById('math-diff').value;
+      let min = 10, max = 99;
+      if (diff === 'centaines') { min = 100; max = 999; }
+      if (diff === 'milliers') { min = 1000; max = 9999; }
+
+      let n1 = Math.floor(Math.random() * (max - min + 1)) + min;
+      let n2 = Math.floor(Math.random() * (n1 - min + 1)) + min;
+
+      currentMathAnswer = n1 - n2;
+      document.getElementById('math-problem').innerText = `${n1} - ${n2} =`;
+      document.getElementById('math-answer').value = '';
+      clearCanvas('scratch-canvas');
+      scratchPages = [null]; currentScratchPage = 0;
+    }
+
+    function validateMath() {
+      const userAns = parseInt(document.getElementById('math-answer').value);
+      if (userAns === currentMathAnswer) {
+        confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
+        alert("🎉 Bravo ! Bonne réponse !");
+        addXP(15);
+        generateMathProblem();
+      } else {
+        const randomPhrase = failurePhrases[Math.floor(Math.random() * failurePhrases.length)] || "Regarde bien ton brouillon !";
+        speakText(randomPhrase);
+        alert(`❌ ${randomPhrase}`);
+      }
+    }
+
+    function addXP(points) {
+      if (!currentUser) return;
+      currentUser.xp = (parseInt(currentUser.xp) || 0) + points;
+      let requiredXP = (currentUser.niveau || 1) * 50;
+      if (currentUser.xp >= requiredXP) {
+        currentUser.niveau++;
+        alert(`🌟 BRAVO ! Tu es monté au Niveau ${currentUser.niveau} ! 🌟`);
+      }
+      updateUserHeaderUI();
+      syncUserToSheets();
+    }
+
+    async function syncUserToSheets() {
+      if (!currentUser) return;
+      try {
+        await fetch(API_URL, {
+          method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'saveUser', ...currentUser })
+        });
+      } catch (e) {}
+    }
+
+    // FONCTIONS ADMIN : LISTES & PHRASES
+    function renderAdminAll() {
+      renderAdminListSelect();
+      renderAdminListWords();
+      renderAdminPhrases();
+      renderAdminUsers();
+    }
+
+    function renderAdminListSelect() {
+      const select = document.getElementById('admin-list-select');
+      if (!select) return;
+      select.innerHTML = '';
+      Object.keys(wordListsData).forEach(listName => {
+        const opt = document.createElement('option');
+        opt.value = listName; opt.innerText = listName;
+        select.appendChild(opt);
+      });
+    }
+
+    function renderAdminListWords() {
+      const select = document.getElementById('admin-list-select');
+      if (!select) return;
+      const listName = select.value;
+      const ul = document.getElementById('admin-words-ul');
+      ul.innerHTML = '';
+
+      if (listName && wordListsData[listName]) {
+        wordListsData[listName].forEach((w, idx) => {
+          const li = document.createElement('li');
+          li.innerHTML = `<span>${w}</span> <button onclick="deleteWordFromList(${idx})">❌</button>`;
+          ul.appendChild(li);
+        });
+      }
+    }
+
+    function promptCreateList() {
+      const name = prompt("Nom de la nouvelle liste (ex: Semaine 2) :");
+      if (name && !wordListsData[name]) {
+        wordListsData[name] = [];
+        renderAdminAll();
+        saveAllWordListsToSheets();
+      }
+    }
+
+    function promptRenameList() {
+      const select = document.getElementById('admin-list-select');
+      const oldName = select.value;
+      if (!oldName) return;
+      const newName = prompt("Nouveau nom de la liste :", oldName);
+      if (newName && newName !== oldName) {
+        wordListsData[newName] = wordListsData[oldName];
+        delete wordListsData[oldName];
+        renderAdminAll();
+        saveAllWordListsToSheets();
+      }
+    }
+
+    function deleteCurrentList() {
+      const select = document.getElementById('admin-list-select');
+      const name = select.value;
+      if (name && confirm(`Supprimer la liste "${name}" ?`)) {
+        delete wordListsData[name];
+        renderAdminAll();
+        saveAllWordListsToSheets();
+      }
+    }
+
+    function addWordToCurrentList() {
+      const select = document.getElementById('admin-list-select');
+      const name = select.value;
+      const input = document.getElementById('admin-new-word-input');
+      const word = input.value.trim();
+      if (name && word) {
+        wordListsData[name].push(word);
+        input.value = '';
+        renderAdminListWords();
+        saveAllWordListsToSheets();
+      }
+    }
+
+    function deleteWordFromList(idx) {
+      const select = document.getElementById('admin-list-select');
+      const name = select.value;
+      if (name) {
+        wordListsData[name].splice(idx, 1);
+        renderAdminListWords();
+        saveAllWordListsToSheets();
+      }
+    }
+
+    async function saveAllWordListsToSheets() {
+      let flatWords = [];
+      Object.keys(wordListsData).forEach(listName => {
+        wordListsData[listName].forEach(w => {
+          flatWords.push({ semaine: listName, mot: w });
+        });
+      });
+
+      try {
+        await fetch(API_URL, {
+          method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'saveWordList', words: flatWords })
+        });
+        populateCalligraphyListSelect();
+      } catch (e) {}
+    }
+
+    function renderAdminPhrases() {
+      const ul = document.getElementById('admin-phrases-ul');
+      ul.innerHTML = '';
+      failurePhrases.forEach((p, idx) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${p}</span> <button onclick="deleteFailurePhrase(${idx})">❌</button>`;
+        ul.appendChild(li);
+      });
+    }
+
+    function addFailurePhrase() {
+      const input = document.getElementById('admin-new-phrase-input');
+      const phrase = input.value.trim();
+      if (phrase) {
+        failurePhrases.push(phrase);
+        input.value = '';
+        renderAdminPhrases();
+        savePhrasesToSheets();
+      }
+    }
+
+    function deleteFailurePhrase(idx) {
+      failurePhrases.splice(idx, 1);
+      renderAdminPhrases();
+      savePhrasesToSheets();
+    }
+
+    async function savePhrasesToSheets() {
+      try {
+        await fetch(API_URL, {
+          method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'savePhrases', phrases: failurePhrases })
+        });
+      } catch (e) {}
+    }
+
+    function renderAdminUsers() {
+      const ul = document.getElementById('admin-users-list');
+      ul.innerHTML = '';
+      usersList.forEach(u => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span><b>${u.nom}</b> (Niv.${u.niveau} | ${u.xp}XP)</span>
+                        <button onclick="editUserAdmin('${u.id}')">✏️ Modifier</button>`;
+        ul.appendChild(li);
+      });
+    }
+
+    function editUserAdmin(id) {
+      const u = usersList.find(x => x.id == id);
+      if (!u) return;
+      document.getElementById('admin-user-name').value = u.nom;
+      document.getElementById('admin-user-pin').value = u.pin || "123";
+      document.getElementById('admin-user-level').value = u.niveau;
+      document.getElementById('admin-user-xp').value = u.xp;
+    }
+
+    async function saveStudentAdmin() {
+      const name = document.getElementById('admin-user-name').value.trim();
+      const pin = document.getElementById('admin-user-pin').value.trim();
+      const level = parseInt(document.getElementById('admin-user-level').value) || 1;
+      const xp = parseInt(document.getElementById('admin-user-xp').value) || 0;
+
+      if (!name) return alert("Remplis le nom !");
+
+      let existing = usersList.find(u => u.nom.toLowerCase() === name.toLowerCase());
+      let id = existing ? existing.id : Date.now().toString();
+
+      let userObj = { id, nom: name, pin, niveau: level, xp, theme: existing ? existing.theme : "classique", mots_difficultes: existing ? existing.mots_difficultes : [] };
+
+      if (existing) Object.assign(existing, userObj);
+      else usersList.push(userObj);
+
+      populateLoginSelect();
+      renderAdminUsers();
+
+      try {
+        await fetch(API_URL, {
+          method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'saveUser', ...userObj })
+        });
+        alert("Élève enregistré !");
+      } catch (e) {}
+    }
+  </script>
+</body>
+</html>
