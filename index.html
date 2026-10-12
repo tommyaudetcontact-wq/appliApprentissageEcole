@@ -594,17 +594,19 @@
 
       targetWordElem.innerText = isDictationMode ? "❓ (Mot caché)" : currentObj.word;
 
+      // Toujours réinitialiser la saisie utilisateur pour qu'il réécrive le mot de lui-même
+      inputElem.value = "";
+
       if (currentObj.errors > 0) {
         const givenLettersCount = Math.min(currentObj.errors, currentObj.word.length);
         const revealed = currentObj.word.substring(0, givenLettersCount);
         const hidden = "_ ".repeat(currentObj.word.length - givenLettersCount);
 
+        // Afficher uniquement l'indice visuel dans la boîte du dessus
         hintContainer.style.display = "block";
         hintLettersElem.innerText = revealed + " " + hidden;
-        inputElem.value = revealed;
       } else {
         hintContainer.style.display = "none";
-        inputElem.value = "";
       }
 
       speakCurrentWord();
@@ -639,10 +641,9 @@
 
         const randomPhrase = failurePhrases[Math.floor(Math.random() * failurePhrases.length)] || "Réessaie !";
         speakText(randomPhrase);
-        alert(`❌ ${randomPhrase}\nLe mot réapparaîtra avec une lettre d'avance !`);
-
-        const failedObj = pendingGameQueue.shift();
-        pendingGameQueue.push(failedObj);
+        
+        const lettersCount = Math.min(currentObj.errors, targetWord.length);
+        alert(`❌ ${randomPhrase}\nRegarde l'indice au-dessus : ${lettersCount} lettre${lettersCount > 1 ? 's' : ''} dévoilée${lettersCount > 1 ? 's' : ''} !`);
 
         syncUserToSheets();
         loadCalligraphyWord();
