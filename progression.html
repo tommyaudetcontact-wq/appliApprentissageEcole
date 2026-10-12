@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>L'École Amusante 🎓 - Parcours de la Semaine</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; font-family: 'Feather', 'Nunito', 'Comic Sans MS', sans-serif; user-select: none; }
+    :root {
+      --duo-green: #58cc02; --duo-green-dark: #46a302;
+      --duo-blue: #1cb0f6; --duo-yellow: #ffc800;
+      --duo-purple: #ce82ff; --duo-border: #e5e5e5; --duo-text: #3c3c3c;
+    }
+    body { margin: 0; padding: 0; background-color: #f7f7f7; color: var(--duo-text); }
+    .school-header {
+      background: white; border-bottom: 2px solid var(--duo-border);
+      padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-size: 1.4rem; font-weight: 800; color: var(--duo-green); margin: 0; }
+    .btn-header {
+      background: white; border: 2px solid var(--duo-border); color: var(--duo-text);
+      padding: 8px 14px; border-radius: 14px; cursor: pointer; font-weight: bold;
+      box-shadow: 0 3px 0 var(--duo-border); text-decoration: none; font-size: 0.9rem;
+    }
+    .container { max-width: 650px; margin: 0 auto; padding: 20px; text-align: center; }
+    .duo-card {
+      background: white; padding: 22px; border-radius: 20px;
+      border: 2px solid var(--duo-border); box-shadow: 0 4px 0 var(--duo-border); margin-bottom: 20px;
+    }
+    .profile-banner { display: flex; align-items: center; gap: 15px; text-align: left; }
+    .avatar { font-size: 3.5rem; background: #e5f6ff; border: 3px solid var(--duo-blue); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
+    .level-title { font-size: 1.6rem; font-weight: 800; margin: 0; color: var(--duo-green); }
+    
+    .timer-box {
+      background: #fff3d8; border: 2px solid var(--duo-yellow); color: #b7791f;
+      padding: 12px; border-radius: 16px; font-weight: 800; font-size: 1rem; margin-bottom: 20px;
+    }
+
+    .tree-path { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px 0; }
+    .tree-node-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; z-index: 2; }
+    .tree-node-wrapper:nth-child(4n+1) { transform: translateX(0); }
+    .tree-node-wrapper:nth-child(4n+2) { transform: translateX(45px); }
+    .tree-node-wrapper:nth-child(4n+3) { transform: translateX(0); }
+    .tree-node-wrapper:nth-child(4n+0) { transform: translateX(-45px); }
+
+    .tree-node {
+      width: 75px; height: 75px; border-radius: 50%; background: #e5e5e5;
+      border: 4px solid #cecece; display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem; box-shadow: 0 6px 0 #bcbcbc; cursor: not-allowed; transition: transform 0.2s;
+    }
+    .tree-node.ready {
+      background: var(--duo-yellow); border-color: #e5b200; box-shadow: 0 6px 0 #c69a00;
+      cursor: pointer; animation: pulse 1.2s infinite;
+    }
+    .tree-node.completed { background: var(--duo-green); border-color: var(--duo-green-dark); box-shadow: 0 6px 0 var(--duo-green-dark); color: white; cursor: default; }
+
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+    .node-label { font-size: 0.85rem; font-weight: 800; margin-top: 6px; background: white; padding: 4px 12px; border-radius: 10px; border: 1px solid var(--duo-border); }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin-top: 15px; }
+    .card-item { background: white; border: 2px solid var(--duo-border); border-radius: 12px; padding: 8px; box-shadow: 0 4px 0 var(--duo-border); }
+    .card-item img { width: 100%; border-radius: 8px; display: block; min-height: 100px; background: #eee; }
+    .card-name { font-size: 0.75rem; font-weight: bold; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-type { font-size: 0.65rem; color: var(--duo-purple); font-weight: 800; }
+    .select-pref { width: 100%; padding: 12px; border: 2px solid var(--duo-border); border-radius: 14px; font-size: 1rem; font-weight: bold; background: #f7f7f7; outline: none; }
+
+    .reward-modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.65); z-index: 2000; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .reward-modal.active { display: flex; animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+    @keyframes popUp {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .reward-card {
+      background: white; border-radius: 28px; padding: 25px; max-width: 420px; width: 100%;
+      text-align: center; border: 4px solid var(--duo-border); box-shadow: 0 10px 0 rgba(0,0,0,0.15);
+    }
+    .reward-icon { font-size: 4.5rem; margin-bottom: 10px; }
+    .reward-title { font-size: 1.8rem; font-weight: 800; color: var(--duo-green); margin: 5px 0; }
+    .reward-card-img { width: 200px; height: auto; border-radius: 16px; border: 3px solid var(--duo-purple); margin: 15px auto; display: block; box-shadow: 0 6px 0 rgba(0,0,0,0.1); min-height: 150px; background: #eee; }
+    
+    .progress-bar-container {
+      width: 100%; background: #e5e5e5; height: 20px; border-radius: 12px; overflow: hidden; margin: 15px 0;
+    }
+    .progress-bar-fill {
+      height: 100%; background: var(--duo-green); width: 0%; transition: width 0.8s ease; border-radius: 12px;
+    }
+
+    .btn-modal {
+      background: var(--duo-green); color: white; border: none; padding: 14px 28px;
+      font-size: 1.2rem; font-weight: 800; border-radius: 16px; cursor: pointer;
+      box-shadow: 0 5px 0 var(--duo-green-dark); width: 100%; margin-top: 15px; text-transform: uppercase;
+    }
+    .btn-modal:active { transform: translateY(3px); box-shadow: none; }
+  </style>
+</head>
+<body>
+
+  <header class="school-header">
+    <h1 class="logo">🦉 École Amusante</h1>
+    <a href="collection.html" class="btn-header" style="margin-right:5px;">🃏 Collection</a>
+    <a href="index.html" class="btn-header">⬅️ RETOUR AU JEU</a>
+  </header>
+
+  <div class="container">
+    
+    <div class="duo-card profile-banner">
+      <div class="avatar">🎓</div>
+      <div style="flex: 1;">
+        <h2 id="prof-name" class="level-title">Élève</h2>
+        <div style="font-weight: bold; color: #777;">
+          Niveau <span id="prof-level">1</span> ⭐ | XP Hebdo : <span id="prof-xp" style="color:var(--duo-green);">0</span> / 10 000 XP
+        </div>
+      </div>
+    </div>
+
+    <div class="timer-box">
+      ⏰ <span id="weekly-timer">Calcul du temps restant...</span>
+    </div>
+
+    <div class="duo-card">
+      <h3 style="margin-top: 0; color: var(--duo-purple);">🎁 Tes Récompenses Cibles</h3>
+      <select id="card-preference-select" class="select-pref" onchange="updateCardPreference()">
+        <option value="both">🔀 Les deux (Pokémon & Lorcana)</option>
+        <option value="pokemon">⚡ Pokémon TCG seulement</option>
+        <option value="lorcana">✨ Disney Lorcana seulement</option>
+      </select>
+    </div>
+
+    <div class="duo-card">
+      <h3 style="margin-top: 0; color: var(--duo-green);">🗺️ Roadmap Hebdomadaire (Objectif 10 000 XP)</h3>
+      <p style="font-size: 0.85rem; color: #666; margin-bottom: 20px;">25 étapes à débloquer cette semaine ! Accumule de l'XP en révisant pour tout récupérer !</p>
+      
+      <div id="tree-path-container" class="tree-path"></div>
+    </div>
+
+    <div class="duo-card">
+      <h3 style="margin-top: 0; color: var(--duo-blue);">🃏 Ta Collection (<span id="cards-count">0</span> cartes)</h3>
+      <div id="cards-container" class="cards-grid"></div>
+    </div>
+
+  </div>
+
+  <div id="xp-modal" class="reward-modal">
+    <div class="reward-card">
+      <div id="xp-modal-icon" class="reward-icon">💰</div>
+      <div id="xp-modal-title" class="reward-title">+50 XP Récupérés !</div>
+      <p id="xp-modal-text" style="color: #666; font-size: 1.05rem;">Tu avances à pas de géant dans la roadmap !</p>
+      
+      <div class="progress-bar-container">
+        <div id="xp-modal-bar" class="progress-bar-fill"></div>
+      </div>
+      <p style="font-weight: bold; font-size: 0.9rem; color: #777;">XP globale : <span id="xp-modal-val">0</span> XP</p>
+
+      <button onclick="closeModal('xp-modal')" class="btn-modal">CONTINUER ! 🚀</button>
+    </div>
+  </div>
+
+  <div id="card-modal" class="reward-modal">
+    <div class="reward-card">
+      <div class="reward-icon">✨</div>
+      <div class="reward-title" style="color: var(--duo-purple);">NOUVELLE CARTE !</div>
+      <p style="font-weight: bold; color: #555; margin-bottom: 0;">Tu as débloqué :</p>
+      
+      <img id="card-modal-img" src="" alt="Carte" class="reward-card-img" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png'">
+      <h3 id="card-modal-name" style="margin: 0; font-size: 1.3rem;">Nom de la carte</h3>
+      <p id="card-modal-type" style="color: var(--duo-purple); font-weight: bold; margin-top: 4px;">Type</p>
+
+      <button onclick="closeModal('card-modal')" class="btn-modal" style="background: var(--duo-purple); box-shadow: 0 5px 0 #a251e0;">AJOUTER À MA COLLECTION 🃏</button>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzvnpPtigFMouPGLFQNlxg6ZvvIK-zLAbDUqMIsncBSHTzKuIOeSWfOlty0tXJ_-Sex-A/exec";
+    const FALLBACK_IMG = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png";
+    let currentUser = null;
+
+    function safeJsonParse(val, fallback = []) {
+      if (!val) return fallback;
+      if (typeof val !== 'string') return val;
+      try {
+        const parsed = JSON.parse(val);
+        return parsed !== null && parsed !== undefined ? parsed : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    window.onload = () => {
+      const stored = localStorage.getItem('school_current_user');
+      if (stored) {
+        currentUser = JSON.parse(stored);
+        currentUser.mots_difficultes = safeJsonParse(currentUser.mots_difficultes, []);
+        currentUser.cards_collection = safeJsonParse(currentUser.cards_collection, []);
+        currentUser.weekly_tree = safeJsonParse(currentUser.weekly_tree, []);
+        if (!currentUser.card_preference) currentUser.card_preference = 'both';
+        
+        document.getElementById('card-preference-select').value = currentUser.card_preference;
+
+        checkAndGenerateWeeklyTree();
+        renderProfile();
+        renderWeeklyTree();
+        renderCardsCollection();
+        startWeeklyTimer();
+      } else {
+        alert("Connecte-toi d'abord dans le jeu !");
+        window.location.href = "index.html";
+      }
+    };
+
+    function getCurrentWeekId() {
+      const now = new Date();
+      const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+      const dayNum = d.getUTCDay() || 7;
+      d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+      const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+      return `${d.getUTCFullYear()}-W${weekNo}`;
+    }
+
+    function generateProceduralTree() {
+      const xpLevels = [
+        10, 30, 60, 100, 150, 220, 300, 400, 520, 650,
+        800, 1000, 1250, 1550, 1900, 2300, 2800, 3400, 4100, 5000,
+        6000, 7200, 8500, 9200, 10000
+      ];
+
+      const bonusIcons = ["💰", "💎", "👑", "🔮", "🎁", "⭐", "🏆", "🌟", "⚡", "🔥", "🪐", "🚀", "💰"];
+      const cardIcons  = ["🃏", "⚡", "✨", "🔥", "🔮", "🏆", "👑", "🌟", "🎯", "🎨", "💎", "🛡️", "🐉"];
+
+      return xpLevels.map((xp, index) => {
+        const isCard = index % 2 === 1;
+        const bonusIdx = Math.floor(index / 2) % bonusIcons.length;
+        const cardIdx = Math.floor(index / 2) % cardIcons.length;
+
+        return {
+          step: index + 1,
+          reqXp: xp,
+          type: isCard ? "card" : "bonus",
+          rewardXp: isCard ? 0 : Math.round(xp * 0.15) + 20,
+          icon: isCard ? cardIcons[cardIdx] : bonusIcons[bonusIdx],
+          claimed: false,
+          title: isCard ? `Carte #${Math.floor(index / 2) + 1}` : `Coffre #${Math.floor(index / 2) + 1}`
+        };
+      });
+    }
+
+    function checkAndGenerateWeeklyTree() {
+      const currentWeekId = getCurrentWeekId();
+      const freshTree = generateProceduralTree();
+      const hasUndefined = currentUser.weekly_tree && currentUser.weekly_tree.some(node => !node.icon || node.icon === "undefined");
+
+      if (!currentUser.tree_week_id || currentUser.tree_week_id !== currentWeekId || !currentUser.weekly_tree || currentUser.weekly_tree.length < 20 || hasUndefined) {
+        currentUser.tree_week_id = currentWeekId;
+        currentUser.weekly_tree = freshTree;
+        if (currentUser.tree_week_id !== currentWeekId) currentUser.weekly_xp = 0;
+        saveUserData();
+      }
+    }
+
+    function renderProfile() {
+      document.getElementById('prof-name').innerText = currentUser.nom || "Élève";
+      document.getElementById('prof-level').innerText = currentUser.niveau || 1;
+      document.getElementById('prof-xp').innerText = currentUser.weekly_xp || 0;
+    }
+
+    function renderWeeklyTree() {
+      const container = document.getElementById('tree-path-container');
+      container.innerHTML = '';
+
+      const weeklyXp = currentUser.weekly_xp || 0;
+
+      currentUser.weekly_tree.forEach((node, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'tree-node-wrapper';
+
+        const elem = document.createElement('div');
+        elem.className = 'tree-node';
+
+        if (node.claimed) {
+          elem.classList.add('completed');
+          elem.innerHTML = '✅';
+        } else if (weeklyXp >= node.reqXp) {
+          elem.classList.add('ready');
+          elem.innerHTML = node.icon || '🎁';
+          elem.onclick = () => claimNodeReward(index);
+        } else {
+          elem.innerHTML = node.icon || '🔒';
+        }
+
+        const label = document.createElement('div');
+        label.className = 'node-label';
+        label.innerText = node.claimed ? 'Réclamé' : `${node.title} (${node.reqXp} XP)`;
+
+        wrapper.appendChild(elem);
+        wrapper.appendChild(label);
+        container.appendChild(wrapper);
+      });
+    }
+
+    async function claimNodeReward(index) {
+      const node = currentUser.weekly_tree[index];
+      if (!node || node.claimed) return;
+
+      node.claimed = true;
+
+      if (node.type === "bonus") {
+        currentUser.xp = (currentUser.xp || 0) + node.rewardXp;
+        confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+        
+        document.getElementById('xp-modal-icon').innerText = node.icon || '💰';
+        document.getElementById('xp-modal-title').innerText = `+${node.rewardXp} XP Récupérés !`;
+        document.getElementById('xp-modal-val').innerText = currentUser.xp;
+        
+        const reqForNextLevel = (currentUser.niveau || 1) * 50;
+        const fillPercent = Math.min(100, Math.round((currentUser.xp / reqForNextLevel) * 100));
+        document.getElementById('xp-modal-bar').style.width = `${fillPercent}%`;
+        
+        openModal('xp-modal');
+      } else if (node.type === "card") {
+        const newCard = await fetchRandomCardReward();
+        if (newCard) {
+          if (!currentUser.cards_collection) currentUser.cards_collection = [];
+          currentUser.cards_collection.push(newCard);
+          
+          confetti({ particleCount: 180, spread: 100, origin: { y: 0.5 } });
+
+          document.getElementById('card-modal-img').src = newCard.image || FALLBACK_IMG;
+          document.getElementById('card-modal-name').innerText = newCard.name;
+          document.getElementById('card-modal-type').innerText = newCard.type;
+
+          openModal('card-modal');
+        }
+      }
+
+      saveUserData();
+      renderProfile();
+      renderWeeklyTree();
+      renderCardsCollection();
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    async function fetchRandomCardReward() {
+      const pref = currentUser.card_preference || "both";
+      const existingCards = currentUser.cards_collection || [];
+      const existingNames = existingCards.map(c => c.name ? c.name.toLowerCase() : '');
+
+      let attempts = 0;
+      let newCard = null;
+
+      while (attempts < 5) {
+        attempts++;
+        let fetchPokemon = (pref === "pokemon") ? true : (pref === "lorcana" ? false : Math.random() > 0.5);
+
+        try {
+          if (fetchPokemon) {
+            const randomId = Math.floor(Math.random() * 150) + 1;
+            const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`);
+            const data = await res.json();
+            const cardObj = {
+              name: data.name.toUpperCase(),
+              type: "Pokémon TCG",
+              image: data.sprites.other['official-artwork'].front_default || data.sprites.front_default
+            };
+
+            if (!existingNames.includes(cardObj.name.toLowerCase())) {
+              newCard = cardObj; break;
+            }
+          } else {
+            const res = await fetch(`https://api.lorcana-api.com/cards/fetch`);
+            const data = await res.json();
+            const randomCard = data[Math.floor(Math.random() * data.length)];
+            const cardObj = {
+              name: randomCard.Name || "Disney Lorcana",
+              type: "Disney Lorcana",
+              image: randomCard.Image || randomCard.image
+            };
+
+            if (!existingNames.includes(cardObj.name.toLowerCase())) {
+              newCard = cardObj; break;
+            }
+          }
+        } catch (err) {}
+      }
+
+      if (!newCard) {
+        newCard = {
+          name: `Pikachu Électrique #${existingCards.length + 1}`,
+          type: pref === "lorcana" ? "Disney Lorcana" : "Pokémon TCG",
+          image: FALLBACK_IMG
+        };
+      }
+      return newCard;
+    }
+
+    function renderCardsCollection() {
+      const container = document.getElementById('cards-container');
+      container.innerHTML = '';
+
+      const cards = currentUser.cards_collection || [];
+      document.getElementById('cards-count').innerText = cards.length;
+
+      if (cards.length === 0) {
+        container.innerHTML = '<p style="grid-column: 1/-1; color: #888;">Gagne de l\'XP dans le jeu pour débloquer tes premières cartes !</p>';
+        return;
+      }
+
+      cards.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'card-item';
+        div.innerHTML = `
+          <img src="${c.image || FALLBACK_IMG}" alt="${c.name}" loading="lazy" onerror="this.src='${FALLBACK_IMG}'">
+          <div class="card-name">${c.name}</div>
+          <div class="card-type">${c.type}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function startWeeklyTimer() {
+      function updateTimer() {
+        const now = new Date();
+        const nextSunday = new Date(now);
+        nextSunday.setDate(now.getDate() + ((7 - now.getDay()) % 7));
+        nextSunday.setHours(23, 59, 59, 999);
+
+        const diff = nextSunday - now;
+        if (diff <= 0) {
+          document.getElementById('weekly-timer').innerText = "Nouvelle semaine ! Recharge la page.";
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const mins = Math.floor((diff / 1000 / 60) % 60);
+
+        document.getElementById('weekly-timer').innerText = `Temps restant cette semaine : ${days}j ${hours}h ${mins}m !`;
+      }
+      updateTimer();
+      setInterval(updateTimer, 60000);
+    }
+
+    async function updateCardPreference() {
+      currentUser.card_preference = document.getElementById('card-preference-select').value;
+      saveUserData();
+    }
+
+    async function saveUserData() {
+      localStorage.setItem('school_current_user', JSON.stringify(currentUser));
+      try {
+        await fetch(API_URL, {
+          method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'saveUser', ...currentUser })
+        });
+      } catch (e) {}
+    }
+  </script>
+</body>
+</html>
