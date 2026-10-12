@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>L'École Amusante 🎓 - Boutique de BD & Récompenses</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; font-family: 'Feather', 'Nunito', 'Comic Sans MS', sans-serif; user-select: none; }
+    :root {
+      --duo-green: #58cc02; --duo-green-dark: #46a302;
+      --duo-blue: #1cb0f6; --duo-yellow: #ffc800;
+      --duo-purple: #ce82ff; --duo-border: #e5e5e5; --duo-text: #3c3c3c;
+    }
+    body { margin: 0; padding: 0; background-color: #f7f7f7; color: var(--duo-text); overflow-x: hidden; }
+
+    /* HEADER RESPONSIVE MOBILE */
+    .school-header {
+      background: white; border-bottom: 2px solid var(--duo-border);
+      padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 8px;
+    }
+    .logo { font-size: 1.2rem; font-weight: 800; color: var(--duo-green); margin: 0; }
+    .nav-buttons { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+    .btn-header {
+      background: white; border: 2px solid var(--duo-border); color: var(--duo-text);
+      padding: 6px 10px; border-radius: 12px; cursor: pointer; font-weight: bold;
+      box-shadow: 0 3px 0 var(--duo-border); text-decoration: none; font-size: 0.85rem; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .btn-header:active { transform: translateY(2px); box-shadow: none; }
+
+    .container { max-width: 750px; margin: 0 auto; padding: 15px; text-align: center; }
+    .duo-card {
+      background: white; padding: 20px; border-radius: 20px;
+      border: 2px solid var(--duo-border); box-shadow: 0 4px 0 var(--duo-border); margin-bottom: 15px; text-align: left;
+    }
+    .profile-banner { display: flex; align-items: center; gap: 12px; }
+    .avatar { font-size: 3rem; background: #fff3d8; border: 3px solid var(--duo-yellow); border-radius: 50%; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; }
+    .level-title { font-size: 1.4rem; font-weight: 800; margin: 0; color: var(--duo-purple); }
+
+    /* GRILLE D'ARTICLES EN BOUTIQUE */
+    .bd-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px; margin-top: 15px;
+    }
+    .bd-card {
+      background: white; border: 2px solid var(--duo-border); border-radius: 18px;
+      padding: 10px; box-shadow: 0 4px 0 var(--duo-border); display: flex;
+      flex-direction: column; justify-content: space-between; align-items: center; text-align: center;
+    }
+    .bd-card img {
+      width: 100%; height: 160px; object-fit: cover; object-position: top; border-radius: 12px;
+      background: #eee; border: 1px solid #ddd;
+    }
+    .bd-title { font-size: 0.85rem; font-weight: 800; margin: 8px 0 4px 0; color: var(--duo-text); text-transform: capitalize; }
+    .bd-price { font-size: 1.05rem; font-weight: 800; color: #2e7d32; margin-bottom: 8px; }
+
+    .btn-buy {
+      background: var(--duo-green); color: white; border: none; padding: 10px;
+      font-size: 0.85rem; font-weight: 800; border-radius: 14px; cursor: pointer;
+      box-shadow: 0 4px 0 var(--duo-green-dark); width: 100%; text-transform: uppercase;
+    }
+    .btn-buy:active { transform: translateY(2px); box-shadow: none; }
+    .btn-buy:disabled { background: #ccc; box-shadow: 0 4px 0 #aaa; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+  <header class="school-header">
+    <h1 class="logo">🦉 École Amusante</h1>
+    <div class="nav-buttons">
+      <a href="progression.html" class="btn-header">📊 Parcours</a>
+      <a href="collection.html" class="btn-header">🃏 Collection</a>
+      <a href="index.html" class="btn-header">🎮 Jeu</a>
+    </div>
+  </header>
+
+  <div class="container">
+    
+    <div class="duo-card profile-banner">
+      <div class="avatar">📚</div>
+      <div style="flex: 1;">
+        <h2 id="prof-name" class="level-title">Boutique de BD</h2>
+        <div style="font-size: 1.1rem; font-weight: 800; color: #2e7d32; margin-top: 4px;">
+          💵 Ton Solde : <span id="prof-money">...</span> $
+        </div>
+      </div>
+    </div>
+
+    <div class="duo-card">
+      <h2 style="margin-top: 0; color: var(--duo-purple);">🛒 Achète tes BD préférées !</h2>
+      <p style="color: #666; font-size: 0.85rem;">Chaque BD coûte <b>6$</b>. Elles seront ajoutées directement à ton album de collection !</p>
+
+      <div id="bd-grid" class="bd-grid">Chargement des BD...</div>
+    </div>
+
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzvnpPtigFMouPGLFQNlxg6ZvvIK-zLAbDUqMIsncBSHTzKuIOeSWfOlty0tXJ_-Sex-A/exec";
+    const GITHUB_REPO_API = "https://api.github.com/repos/tommyaudetcontact-wq/appliApprentissageEcole/contents/bd";
+
+    let currentUser = null;
+    let bdList = [];
+
+    function safeJsonParse(val, fallback = []) {
+      if (!val) return fallback;
+      if (typeof val !== 'string') return val;
+      try { return JSON.parse(val) || fallback; } catch (e) { return fallback; }
+    }
+
+    window.onload = async () => {
+      const stored = localStorage.getItem('school_current_user');
+      if (stored) {
+        currentUser = JSON.parse(stored);
+        currentUser.argent = parseInt(currentUser.argent || 0);
+        currentUser.cards_collection = safeJsonParse(currentUser.cards_collection, []);
+        
+        renderProfile();
+        
+        await loadUserDataFromSheets();
+        await fetchBdFilesFromGit();
+      } else {
+        alert("Connecte-toi d'abord dans le jeu !");
+        window.location.href = "index.html";
+      }
+    };
+
+    async function loadUserDataFromSheets() {
+      try {
+        const res = await fetch(`${API_URL}?action=getData`);
+        const data = await res.json();
+        if (data && data.users) {
+          const freshUser = data.users.find(u => u.id.toString() === currentUser.id.toString());
+          if (freshUser) {
+            currentUser.argent = parseInt(freshUser.argent || 0);
+            currentUser.cards_collection = safeJsonParse(freshUser.cards_collection, []);
+            localStorage.setItem('school_current_user', JSON.stringify(currentUser));
+            renderProfile();
+          }
+        }
+      } catch (e) {
+        console.warn("Échec de la synchro réseau");
+      }
+    }
+
+    function renderProfile() {
+      document.getElementById('prof-name').innerText = currentUser.nom || "Élève";
+      document.getElementById('prof-money').innerText = currentUser.argent || 0;
+    }
+
+    function formatTitle(filename) {
+      const nameOnly = filename.replace(/\.(jpg|jpeg|png|webp)$/i, '');
+      return nameOnly.replace(/_/g, ' ').replace(/-/g, ' ');
+    }
+
+    async function fetchBdFilesFromGit() {
+      const container = document.getElementById('bd-grid');
+      try {
+        const response = await fetch(GITHUB_REPO_API);
+        if (!response.ok) throw new Error("Erreur de chargement des BD");
+
+        const files = await response.json();
+
+        bdList = files
+          .filter(file => file.type === "file" && /\.(jpg|jpeg|png|webp)$/i.test(file.name))
+          .map(file => ({
+            rawName: file.name,
+            title: formatTitle(file.name),
+            imagePath: file.download_url || `bd/${encodeURIComponent(file.name)}`,
+            price: 6
+          }));
+
+        renderShop();
+      } catch (err) {
+        container.innerHTML = '<p style="grid-column: 1/-1; color: #888;">Aucune BD trouvée dans le dossier <code>bd/</code>.</p>';
+      }
+    }
+
+    function renderShop() {
+      const container = document.getElementById('bd-grid');
+      container.innerHTML = '';
+
+      if (bdList.length === 0) {
+        container.innerHTML = '<p style="grid-column: 1/-1; color: #888;">Aucune BD disponible.</p>';
+        return;
+      }
+
+      bdList.forEach((bd, idx) => {
+        const canAfford = (currentUser.argent || 0) >= bd.price;
+
+        const div = document.createElement('div');
+        div.className = 'bd-card';
+        div.innerHTML = `
+          <img src="${bd.imagePath}" alt="${bd.title}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png'">
+          <div class="bd-title">${bd.title}</div>
+          <div class="bd-price">💵 ${bd.price} $</div>
+          <button onclick="buyBD(${idx})" class="btn-buy" ${canAfford ? '' : 'disabled'}>
+            ${canAfford ? 'Acheter' : 'Pas assez $'}
+          </button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function buyBD(index) {
+      const bd = bdList[index];
+      if (!bd) return;
+
+      if ((currentUser.argent || 0) < bd.price) {
+        return alert("Tu n'as pas assez d'argent !");
+      }
+
+      currentUser.argent -= bd.price;
+
+      if (!currentUser.cards_collection) currentUser.cards_collection = [];
+      currentUser.cards_collection.push({
+        name: bd.title,
+        type: "Bande Dessinée",
+        image: bd.imagePath
+      });
+
+      confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+      alert(`🎉 Félicitations ! Tu as acheté la BD "${bd.title}" pour 6$ ! Retrouve-la dans ta collection !`);
+
+      saveUserData();
+      renderProfile();
+      renderShop();
+    }
+
+    async function saveUserData() {
+      localStorage.setItem('school_current_user', JSON.stringify(currentUser));
+      try {
+        await fetch(API_URL, {
+          method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'saveUser', ...currentUser })
+        });
+      } catch (e) {}
+    }
+  </script>
+</body>
+</html>

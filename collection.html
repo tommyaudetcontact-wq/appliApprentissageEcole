@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>L'École Amusante 🎓 - Collection & Échanges</title>
   
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -15,33 +15,34 @@
       --duo-yellow: #ffc800; --duo-purple: #ce82ff;
       --duo-border: #e5e5e5; --duo-text: #3c3c3c;
     }
-    body { margin: 0; padding: 0; background-color: #f7f7f7; color: var(--duo-text); }
+    body { margin: 0; padding: 0; background-color: #f7f7f7; color: var(--duo-text); overflow-x: hidden; }
     
+    /* HEADER RESPONSIVE MOBILE */
     .school-header {
       background: white; border-bottom: 2px solid var(--duo-border);
-      padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;
-      position: sticky; top: 0; z-index: 100;
+      padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 8px;
     }
-    .logo { font-size: 1.4rem; font-weight: 800; color: var(--duo-green); margin: 0; }
-    .nav-buttons { display: flex; gap: 8px; }
+    .logo { font-size: 1.2rem; font-weight: 800; color: var(--duo-green); margin: 0; }
+    .nav-buttons { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
     .btn-header {
       background: white; border: 2px solid var(--duo-border); color: var(--duo-text);
-      padding: 8px 14px; border-radius: 14px; cursor: pointer; font-weight: bold;
-      box-shadow: 0 3px 0 var(--duo-border); text-decoration: none; font-size: 0.9rem;
+      padding: 6px 10px; border-radius: 12px; cursor: pointer; font-weight: bold;
+      box-shadow: 0 3px 0 var(--duo-border); text-decoration: none; font-size: 0.85rem; display: inline-flex; align-items: center; justify-content: center;
     }
     .btn-header:active { transform: translateY(2px); box-shadow: none; }
 
-    .container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
+    .container { max-width: 850px; margin: 0 auto; padding: 15px; text-align: center; }
     .duo-card {
-      background: white; padding: 22px; border-radius: 20px;
-      border: 2px solid var(--duo-border); box-shadow: 0 4px 0 var(--duo-border); margin-bottom: 20px;
+      background: white; padding: 20px; border-radius: 20px;
+      border: 2px solid var(--duo-border); box-shadow: 0 4px 0 var(--duo-border); margin-bottom: 15px; text-align: left;
     }
 
-    .tab-buttons { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+    .tab-buttons { display: flex; gap: 8px; justify-content: center; margin-bottom: 15px; }
     .tab-btn {
-      flex: 1; padding: 12px; font-size: 1.05rem; font-weight: 800; border-radius: 16px;
+      flex: 1; padding: 10px; font-size: 0.95rem; font-weight: 800; border-radius: 16px;
       border: 2px solid var(--duo-border); background: white; cursor: pointer;
-      box-shadow: 0 4px 0 var(--duo-border);
+      box-shadow: 0 4px 0 var(--duo-border); text-align: center;
     }
     .tab-btn.active {
       background: var(--duo-purple); color: white; border-color: #b55ff8;
@@ -51,39 +52,62 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
+    /* GRILLE UNIFORME DE CARTES, BD ET RÉCOMPENSES */
     .cards-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 12px; margin-top: 15px;
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px; 
+      margin-top: 15px;
+      align-items: stretch;
     }
+    
     .card-item {
-      background: white; border: 2px solid var(--duo-border); border-radius: 16px;
-      padding: 8px; box-shadow: 0 4px 0 var(--duo-border); cursor: pointer;
-      transition: transform 0.15s, border-color 0.15s; position: relative;
+      background: white; 
+      border: 2px solid var(--duo-border); 
+      border-radius: 18px;
+      padding: 8px; 
+      box-shadow: 0 4px 0 var(--duo-border); 
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s; 
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
     }
-    .card-item:hover { transform: scale(1.03); }
-    .card-item img { width: 100%; border-radius: 10px; display: block; min-height: 110px; background: #eee; object-fit: cover; }
-    .card-name { font-size: 0.8rem; font-weight: bold; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .card-type { font-size: 0.7rem; color: var(--duo-purple); font-weight: 800; }
+    .card-item:hover { transform: scale(1.02); }
+    
+    .card-item img { 
+      width: 100%; 
+      height: 150px; 
+      border-radius: 12px; 
+      display: block; 
+      background: #eee; 
+      object-fit: cover; 
+      object-position: top;
+    }
+
+    .card-name { font-size: 0.8rem; font-weight: 800; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+    .card-type { font-size: 0.65rem; color: var(--duo-purple); font-weight: 800; margin-top: 2px; text-align: center; }
 
     .card-item.selected {
       border: 3px solid var(--duo-green) !important;
       box-shadow: 0 0 10px rgba(88, 204, 2, 0.6), 0 4px 0 var(--duo-green-dark) !important;
-      transform: scale(1.05);
+      transform: scale(1.04);
     }
 
     .trade-card {
       background: #fdf8ff; border: 2px solid var(--duo-purple); border-radius: 18px;
-      padding: 15px; margin-bottom: 12px; display: flex; align-items: center;
-      justify-content: space-between; text-align: left; gap: 10px;
+      padding: 12px; margin-bottom: 10px; display: flex; align-items: center;
+      justify-content: space-between; text-align: left; gap: 8px; flex-wrap: wrap;
     }
-    .trade-info { flex: 1; }
-    .trade-cards-flex { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-    .trade-mini-img { width: 50px; height: 70px; border-radius: 8px; border: 1px solid #ccc; object-fit: cover; background: #eee; }
+    .trade-info { flex: 1; min-width: 200px; }
+    .trade-cards-flex { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+    .trade-mini-img { width: 45px; height: 60px; border-radius: 8px; border: 1px solid #ccc; object-fit: cover; background: #eee; }
 
     .modal {
       display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.8); z-index: 2000; align-items: center; justify-content: center;
-      padding: 20px;
+      background: rgba(0, 0, 0, 0.85); z-index: 2000; align-items: center; justify-content: center;
+      padding: 15px;
     }
     .modal.active { display: flex; animation: popUp 0.25s ease-out; }
 
@@ -93,14 +117,43 @@
     }
 
     .modal-card {
-      background: white; border-radius: 28px; padding: 25px; max-width: 480px; width: 100%;
-      text-align: center; position: relative; max-height: 90vh; overflow-y: auto;
+      background: white; border-radius: 24px; padding: 18px; max-width: 520px; width: 100%;
+      text-align: center; position: relative; max-height: 92vh; display: flex; flex-direction: column;
     }
-    .full-card-img { width: 220px; height: auto; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); margin: 15px 0; min-height: 180px; background: #eee; }
+
+    .modal-card.bd-mode {
+      max-width: 95vw !important;
+      width: 95vw !important;
+      height: 92vh !important;
+      max-height: 92vh !important;
+      padding: 12px !important;
+    }
+
+    .img-scroll-container {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      margin: 10px 0;
+      border-radius: 16px;
+      border: 2px solid var(--duo-border);
+      background: #111;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .full-card-img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+    }
 
     button.btn {
-      padding: 12px 20px; font-size: 1rem; font-weight: 800; border: none;
-      border-radius: 16px; cursor: pointer; text-transform: uppercase;
+      padding: 10px 16px; font-size: 0.9rem; font-weight: 800; border: none;
+      border-radius: 14px; cursor: pointer; text-transform: uppercase;
     }
     .btn-success { background: var(--duo-green); color: white; box-shadow: 0 4px 0 var(--duo-green-dark); }
     .btn-action { background: var(--duo-blue); color: white; box-shadow: 0 4px 0 var(--duo-blue-dark); }
@@ -109,8 +162,8 @@
     .btn-back { background: white; border: 2px solid var(--duo-border); color: #777; box-shadow: 0 4px 0 var(--duo-border); }
 
     .form-select {
-      width: 100%; padding: 12px; border: 2px solid var(--duo-border); border-radius: 14px;
-      font-size: 1rem; font-weight: bold; background: #f7f7f7; outline: none; margin: 10px 0;
+      width: 100%; padding: 10px; border: 2px solid var(--duo-border); border-radius: 14px;
+      font-size: 0.95rem; font-weight: bold; background: #f7f7f7; outline: none; margin: 8px 0;
     }
   </style>
 </head>
@@ -119,8 +172,9 @@
   <header class="school-header">
     <h1 class="logo">🦉 École Amusante</h1>
     <div class="nav-buttons">
+      <a href="boutique.html" class="btn-header" style="background: #fff3d8; border-color: var(--duo-yellow);">📚 Boutique</a>
+      <a href="progression.html" class="btn-header">📊 Parcours</a>
       <a href="index.html" class="btn-header">🎮 Jeu</a>
-      <a href="progression.html" class="btn-header">📊 Progression</a>
     </div>
   </header>
 
@@ -128,19 +182,21 @@
     
     <div class="tab-buttons">
       <button id="btn-tab-album" class="tab-btn active" onclick="switchTab('album')">🖼️ Mon Album</button>
-      <button id="btn-tab-market" class="tab-btn" onclick="switchTab('market')">🔄 Marché d'Échange (<span id="market-count">0</span>)</button>
+      <button id="btn-tab-market" class="tab-btn" onclick="switchTab('market')">🔄 Marché (<span id="market-count">0</span>)</button>
     </div>
 
     <!-- TAB 1 : MON ALBUM -->
     <div id="tab-album" class="tab-content active">
       <div class="duo-card">
-        <h2 style="margin-top:0; color: var(--duo-purple);">🃏 Ma Collection de Cartes</h2>
-        <p style="color: #666; font-size: 0.9rem;">Clique sur une carte pour l'admirer en plein écran ou la proposer à l'échange !</p>
+        <h2 style="margin-top:0; color: var(--duo-purple);">🃏 Ma Collection</h2>
+        <p style="color: #666; font-size: 0.85rem;">Clique sur un élément pour le consulter ou le proposer à l'échange !</p>
 
-        <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
+        <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap;">
           <button class="btn btn-back" onclick="filterCollection('all')">Toutes</button>
           <button class="btn btn-back" onclick="filterCollection('Pokémon TCG')">⚡ Pokémon</button>
           <button class="btn btn-back" onclick="filterCollection('Disney Lorcana')">✨ Lorcana</button>
+          <button class="btn btn-back" style="border-color: var(--duo-yellow);" onclick="filterCollection('Bande Dessinée')">📚 BD</button>
+          <button class="btn btn-back" style="border-color: var(--duo-purple);" onclick="filterCollection('Récompense Ultime')">🎁 Récompenses</button>
         </div>
 
         <div id="album-grid" class="cards-grid"></div>
@@ -150,11 +206,11 @@
     <!-- TAB 2 : MARCHÉ D'ÉCHANGE -->
     <div id="tab-market" class="tab-content">
       <div class="duo-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <h2 style="margin:0; color: var(--duo-blue);">🔄 Offres d'Échanges</h2>
-          <button onclick="manualRefreshMarket()" class="btn btn-action" style="padding: 8px 14px; font-size: 0.85rem;">🔄 Rafraîchir</button>
+          <button onclick="manualRefreshMarket()" class="btn btn-action" style="padding: 6px 12px; font-size: 0.8rem;">🔄 Rafraîchir</button>
         </div>
-        <p style="color: #666; font-size: 0.9rem; margin-top:0;">Découvre les cartes proposées par tes camarades et échange les tiennes !</p>
+        <p style="color: #666; font-size: 0.85rem; margin-top:0;">Échange tes cartes, BD et Récompenses avec tes camarades !</p>
 
         <div id="market-list"></div>
       </div>
@@ -162,15 +218,17 @@
 
   </div>
 
-  <!-- MODALE PLEIN ÉCRAN -->
+  <!-- MODALE PLEIN ÉCRAN / LECTURE BD DEFILANTE -->
   <div id="fullscreen-card-modal" class="modal">
-    <div class="modal-card">
-      <h3 id="modal-card-name" style="margin: 0; font-size: 1.4rem;">Nom de la Carte</h3>
+    <div id="modal-card-box" class="modal-card">
+      <h3 id="modal-card-name" style="margin: 0; font-size: 1.3rem;">Nom de l'objet</h3>
       <p id="modal-card-type" style="color: var(--duo-purple); font-weight: bold; margin: 4px 0;">Type</p>
 
-      <img id="modal-card-img" src="" alt="Carte" class="full-card-img" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png'">
+      <div class="img-scroll-container">
+        <img id="modal-card-img" src="" alt="Objet" class="full-card-img" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png'">
+      </div>
 
-      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+      <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 5px;">
         <button id="btn-propose-trade" onclick="openProposeTradeModal()" class="btn btn-purple">🔄 Proposer à l'échange</button>
         <button onclick="closeModal('fullscreen-card-modal')" class="btn btn-back">❌ Fermer</button>
       </div>
@@ -181,42 +239,42 @@
   <div id="trade-create-modal" class="modal">
     <div class="modal-card">
       <h3 style="margin-top:0; color: var(--duo-purple);">🔄 Proposer un Échange</h3>
-      <p style="font-size: 0.9rem; color: #555;">Tu échanges ta carte : <b id="trade-offered-card-name">...</b></p>
+      <p style="font-size: 0.85rem; color: #555;">Tu échanges : <b id="trade-offered-card-name">...</b></p>
 
-      <div style="text-align: left; margin-top: 15px;">
-        <label style="font-weight: bold; color: #666;">1. Choisis le destinataire :</label>
+      <div style="text-align: left; margin-top: 10px;">
+        <label style="font-weight: bold; color: #666; font-size: 0.85rem;">1. Choisis le destinataire :</label>
         <select id="trade-target-user" class="form-select" onchange="updateTargetUserCardsSelect()">
           <option value="ALL">📢 Tout le monde (Offre publique)</option>
         </select>
 
-        <label style="font-weight: bold; color: #666; margin-top: 10px; display: block;">2. Carte souhaitée en retour :</label>
+        <label style="font-weight: bold; color: #666; font-size: 0.85rem; margin-top: 8px; display: block;">2. Élément souhaité en retour :</label>
         <select id="trade-requested-card" class="form-select">
-          <option value="ANY">❓ N'importe quelle carte équivalente</option>
+          <option value="ANY">❓ N'importe quel élément équivalent</option>
         </select>
       </div>
 
-      <div style="display: flex; gap: 10px; margin-top: 15px;">
-        <button onclick="confirmCreateTradeOffer()" class="btn btn-success" style="flex:1;">✅ PUBLIER L'OFFRE</button>
+      <div style="display: flex; gap: 8px; margin-top: 15px;">
+        <button onclick="confirmCreateTradeOffer()" class="btn btn-success" style="flex:1;">✅ PUBLIER</button>
         <button onclick="closeModal('trade-create-modal')" class="btn btn-back">ANNULER</button>
       </div>
     </div>
   </div>
 
-  <!-- MODALE ACCEPTER UN ÉCHANGE (VISUELLE) -->
+  <!-- MODALE ACCEPTER UN ÉCHANGE -->
   <div id="trade-accept-modal" class="modal">
     <div class="modal-card">
       <h3 style="margin-top:0; color: var(--duo-green);">🤝 Accepter l'échange</h3>
-      <p style="font-size: 0.9rem; color: #555;">Tu vas recevoir : <b id="accept-modal-receiving-card">...</b></p>
+      <p style="font-size: 0.85rem; color: #555;">Tu vas recevoir : <b id="accept-modal-receiving-card">...</b></p>
       
-      <div style="text-align: left; margin-top: 15px;">
-        <label style="font-weight: bold; color: #666; display: block; margin-bottom: 8px;">
-          👇 Clique sur la carte que tu donnes en échange :
+      <div style="text-align: left; margin-top: 10px;">
+        <label style="font-weight: bold; color: #666; font-size: 0.85rem; display: block; margin-bottom: 6px;">
+          👇 Clique sur la carte / BD / Récompense que tu donnes :
         </label>
         
-        <div id="accept-modal-cards-grid" class="cards-grid" style="max-height: 250px; overflow-y: auto; padding: 5px;"></div>
+        <div id="accept-modal-cards-grid" class="cards-grid" style="max-height: 220px; overflow-y: auto; padding: 4px;"></div>
       </div>
 
-      <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <div style="display: flex; gap: 8px; margin-top: 15px;">
         <button id="btn-confirm-accept-trade" onclick="confirmAcceptTrade()" class="btn btn-success" style="flex:1;">🤝 VALIDER L'ÉCHANGE</button>
         <button onclick="closeModal('trade-accept-modal')" class="btn btn-back">ANNULER</button>
       </div>
@@ -287,6 +345,7 @@
             pin: u.pin || u.Pin,
             niveau: u.niveau || u.Niveau,
             xp: u.xp || u.XP,
+            argent: u.argent || u.Argent || 0,
             weekly_xp: u.weekly_xp || u.Weekly_XP,
             tree_week_id: u.tree_week_id || u.Tree_Week_ID,
             card_preference: u.card_preference || u.Card_Preference,
@@ -334,7 +393,7 @@
       }
 
       if (cards.length === 0) {
-        container.innerHTML = `<p style="grid-column: 1/-1; color: #888;">Aucune carte à afficher dans cette catégorie !</p>`;
+        container.innerHTML = `<p style="grid-column: 1/-1; color: #888; text-align: center;">Aucun élément dans cette catégorie !</p>`;
         return;
       }
 
@@ -344,8 +403,10 @@
         item.onclick = () => openFullscreenModal(c);
         item.innerHTML = `
           <img src="${c.image || FALLBACK_IMG}" alt="${c.name}" onerror="this.src='${FALLBACK_IMG}'">
-          <div class="card-name">${c.name}</div>
-          <div class="card-type">${c.type}</div>
+          <div>
+            <div class="card-name">${c.name}</div>
+            <div class="card-type">${c.type}</div>
+          </div>
         `;
         container.appendChild(item);
       });
@@ -360,7 +421,17 @@
       selectedCardForModal = card;
       document.getElementById('modal-card-name').innerText = card.name;
       document.getElementById('modal-card-type').innerText = card.type;
-      document.getElementById('modal-card-img').src = card.image || FALLBACK_IMG;
+      
+      const imgElem = document.getElementById('modal-card-img');
+      const boxElem = document.getElementById('modal-card-box');
+      
+      imgElem.src = card.image || FALLBACK_IMG;
+
+      if (card.type === "Bande Dessinée") {
+        boxElem.classList.add('bd-mode');
+      } else {
+        boxElem.classList.remove('bd-mode');
+      }
 
       openModal('fullscreen-card-modal');
     }
@@ -388,7 +459,7 @@
     function updateTargetUserCardsSelect() {
       const targetId = document.getElementById('trade-target-user').value;
       const reqSelect = document.getElementById('trade-requested-card');
-      reqSelect.innerHTML = '<option value="ANY">❓ N\'importe quelle carte équivalente</option>';
+      reqSelect.innerHTML = '<option value="ANY">❓ N\'importe quel élément équivalent</option>';
 
       if (targetId !== 'ALL') {
         const targetUser = usersList.find(u => u.id === targetId);
@@ -425,7 +496,7 @@
       switchTab('market');
 
       await syncTradesToSheets();
-      alert("🎉 Ton offre d'échange a été publiée sur le marché !");
+      alert("🎉 Ton offre a été publiée sur le marché d'échange !");
     }
 
     function renderMarketList() {
@@ -433,7 +504,7 @@
       container.innerHTML = '';
 
       if (!tradeMarketList || tradeMarketList.length === 0) {
-        container.innerHTML = '<p style="color:#888;">Aucune offre d\'échange en cours pour le moment.</p>';
+        container.innerHTML = '<p style="color:#888; text-align: center;">Aucune offre d\'échange en cours pour le moment.</p>';
         return;
       }
 
@@ -448,27 +519,27 @@
         
         let cardObj = typeof trade.offeredCard === 'string' ? safeJsonParse(trade.offeredCard, {}) : trade.offeredCard;
         let cardImg = (cardObj && cardObj.image) ? cardObj.image : FALLBACK_IMG;
-        let cardName = (cardObj && cardObj.name) ? cardObj.name : 'Carte';
+        let cardName = (cardObj && cardObj.name) ? cardObj.name : 'Élément';
 
         div.innerHTML = `
           <div class="trade-info">
-            <div style="font-weight:bold; color:var(--duo-purple);">Proposé par : ${trade.ownerName} (Pour : ${targetText})</div>
+            <div style="font-weight:bold; color:var(--duo-purple); font-size:0.85rem;">Proposé par : ${trade.ownerName} (Pour : ${targetText})</div>
             <div class="trade-cards-flex">
               <div>
-                <small style="display:block; color:#777;">Donne :</small>
+                <small style="display:block; color:#777; font-size:0.7rem;">Donne :</small>
                 <img src="${cardImg}" class="trade-mini-img" title="${cardName}" onerror="this.src='${FALLBACK_IMG}'">
               </div>
-              <div style="font-size:1.5rem;">➡️</div>
+              <div style="font-size:1.3rem;">➡️</div>
               <div>
-                <small style="display:block; color:#777;">Demande :</small>
-                <span style="font-weight:bold; color:var(--duo-blue);">${trade.requestedCardName === 'ANY' ? "N'importe quelle carte" : trade.requestedCardName}</span>
+                <small style="display:block; color:#777; font-size:0.7rem;">Demande :</small>
+                <span style="font-weight:bold; color:var(--duo-blue); font-size:0.85rem;">${trade.requestedCardName === 'ANY' ? "N'importe quel élément" : trade.requestedCardName}</span>
               </div>
             </div>
           </div>
           <div>
             ${isMine 
-              ? `<button onclick="cancelTradeOffer(${index})" class="btn btn-danger" style="font-size:0.8rem;">❌ Annuler</button>`
-              : (isForMe ? `<button onclick="openAcceptTradeModal(${index})" class="btn btn-success" style="font-size:0.85rem;">🤝 ACCEPTER</button>` : `<span style="font-size:0.8rem; color:#aaa;">Réservé</span>`)
+              ? `<button onclick="cancelTradeOffer(${index})" class="btn btn-danger" style="font-size:0.75rem; padding:6px 10px;">❌ Annuler</button>`
+              : (isForMe ? `<button onclick="openAcceptTradeModal(${index})" class="btn btn-success" style="font-size:0.8rem; padding:8px 12px;">🤝 ACCEPTER</button>` : `<span style="font-size:0.75rem; color:#aaa;">Réservé</span>`)
             }
           </div>
         `;
@@ -480,7 +551,6 @@
       const trade = tradeMarketList[tradeIndex];
       if (!trade) return;
 
-      // SÉCURITÉ : Interdire à l'auteur de l'offre d'accepter sa propre offre
       if (trade.ownerId === currentUser.id) {
         return alert("Tu ne peux pas accepter ton propre échange !");
       }
@@ -488,14 +558,14 @@
       let myCards = currentUser.cards_collection || [];
 
       if (myCards.length === 0) {
-        return alert("Tu n'as aucune carte dans ton album à donner en échange !");
+        return alert("Tu n'as aucun élément dans ton album à donner en échange !");
       }
 
       selectedTradeIndexToAccept = tradeIndex;
       selectedMyCardIndexToGive = null;
 
       let cardObj = typeof trade.offeredCard === 'string' ? safeJsonParse(trade.offeredCard, {}) : trade.offeredCard;
-      document.getElementById('accept-modal-receiving-card').innerText = (cardObj && cardObj.name) ? cardObj.name : "Carte";
+      document.getElementById('accept-modal-receiving-card').innerText = (cardObj && cardObj.name) ? cardObj.name : "Élément";
 
       const gridContainer = document.getElementById('accept-modal-cards-grid');
       gridContainer.innerHTML = '';
@@ -518,7 +588,7 @@
       });
 
       if (gridContainer.children.length === 0) {
-        return alert(`Tu ne possèdes pas la carte "${trade.requestedCardName}" demandée par ${trade.ownerName} !`);
+        return alert(`Tu ne possèdes pas "${trade.requestedCardName}" demandé par ${trade.ownerName} !`);
       }
 
       openModal('trade-accept-modal');
@@ -537,7 +607,7 @@
     async function confirmAcceptTrade() {
       if (selectedTradeIndexToAccept === null) return;
       if (selectedMyCardIndexToGive === null) {
-        return alert("Clique d'abord sur la carte que tu souhaites donner !");
+        return alert("Clique d'abord sur l'élément que tu souhaites donner !");
       }
 
       const trade = tradeMarketList[selectedTradeIndexToAccept];
@@ -549,18 +619,17 @@
       let myCards = currentUser.cards_collection || [];
       const cardGivenByMe = myCards[selectedMyCardIndexToGive];
 
-      if (!cardGivenByMe) return alert("Sélectionne une carte valide !");
+      if (!cardGivenByMe) return alert("Sélectionne un élément valide !");
 
       let cardOfferedBySeller = typeof trade.offeredCard === 'string' ? safeJsonParse(trade.offeredCard, {}) : trade.offeredCard;
 
       const confirmBtn = document.getElementById('btn-confirm-accept-trade');
       if (confirmBtn) {
         confirmBtn.disabled = true;
-        confirmBtn.innerText = "⏳ Échange en cours...";
+        confirmBtn.innerText = "⏳ Échange...";
       }
 
       try {
-        // Transaction atomique au niveau du serveur
         await fetch(API_URL, {
           method: 'POST',
           mode: 'no-cors',
@@ -573,10 +642,7 @@
           })
         });
 
-        // Pause pour laisser Google Apps Script enregistrer
         await new Promise(r => setTimeout(r, 800));
-
-        // Recharger les collections mises à jour
         await loadDataFromSheets();
 
         closeModal('trade-accept-modal');

@@ -13,69 +13,80 @@
       --duo-green: #58cc02; --duo-green-dark: #46a302;
       --duo-blue: #1cb0f6; --duo-blue-dark: #1899d6;
       --duo-yellow: #ffc800; --duo-red: #ff4b4b;
+      --duo-purple: #ce82ff; --duo-purple-dark: #9c3de7;
       --duo-card-bg: #ffffff; --duo-border: #e5e5e5; --duo-text: #3c3c3c; --duo-gray: #afafaf;
     }
     body { margin: 0; padding: 0; background-color: #f7f7f7; color: var(--duo-text); overflow-x: hidden; }
 
+    /* HEADER RESPONSIVE MOBILE */
     .school-header {
       background: white; border-bottom: 2px solid var(--duo-border);
-      padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;
-      position: sticky; top: 0; z-index: 100;
+      padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 8px;
     }
-    .logo { font-size: 1.4rem; font-weight: 800; color: var(--duo-green); margin: 0; }
-    .user-badge { background: #fff9e6; border: 2px solid var(--duo-yellow); color: #b7791f; padding: 6px 14px; border-radius: 16px; font-weight: bold; font-size: 0.95rem; }
+    .logo { font-size: 1.2rem; font-weight: 800; color: var(--duo-green); margin: 0; }
+    .user-badge { background: #fff9e6; border: 2px solid var(--duo-yellow); color: #b7791f; padding: 4px 10px; border-radius: 14px; font-weight: bold; font-size: 0.85rem; }
+    
+    .nav-buttons { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
     .btn-header {
       background: white; border: 2px solid var(--duo-border); color: var(--duo-text);
-      padding: 8px 14px; border-radius: 14px; cursor: pointer; font-weight: bold;
-      box-shadow: 0 3px 0 var(--duo-border); text-decoration: none; font-size: 0.9rem; display: inline-block;
+      padding: 6px 10px; border-radius: 12px; cursor: pointer; font-weight: bold;
+      box-shadow: 0 3px 0 var(--duo-border); text-decoration: none; font-size: 0.85rem; display: inline-flex; align-items: center; justify-content: center;
     }
     .btn-header:active { transform: translateY(2px); box-shadow: none; }
 
-    .screen { display: none; padding: 20px; max-width: 650px; margin: 0 auto; text-align: center; }
+    .screen { display: none; padding: 15px; max-width: 650px; margin: 0 auto; text-align: center; }
     .screen.active { display: block; animation: popIn 0.25s ease-out; }
 
     @keyframes popIn { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-    .duo-card { background: var(--duo-card-bg); padding: 25px; border-radius: 20px; border: 2px solid var(--duo-border); box-shadow: 0 4px 0 var(--duo-border); margin-top: 20px; }
-    .form-group { margin-bottom: 15px; text-align: left; }
-    .form-group label { display: block; font-weight: bold; margin-bottom: 6px; color: #777; }
-    .form-group input, .form-group select { width: 100%; padding: 14px; border: 2px solid var(--duo-border); border-radius: 14px; font-size: 1.1rem; background: #f7f7f7; outline: none; }
+    .duo-card { background: var(--duo-card-bg); padding: 20px; border-radius: 20px; border: 2px solid var(--duo-border); box-shadow: 0 4px 0 var(--duo-border); margin-top: 15px; text-align: left; }
+    .form-group { margin-bottom: 12px; text-align: left; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #666; font-size: 0.9rem; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 2px solid var(--duo-border); border-radius: 14px; font-size: 1rem; background: #f7f7f7; outline: none; }
     
-    .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-    .card-game { background: var(--duo-card-bg); border: 2px solid var(--duo-border); border-radius: 20px; padding: 20px 15px; cursor: pointer; box-shadow: 0 5px 0 var(--duo-border); transition: all 0.15s ease; }
+    .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+    .card-game { background: var(--duo-card-bg); border: 2px solid var(--duo-border); border-radius: 20px; padding: 15px 10px; cursor: pointer; box-shadow: 0 5px 0 var(--duo-border); transition: all 0.15s ease; text-align: center; }
     .card-game:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--duo-border); }
-    .card-game .icon { font-size: 3rem; display: block; margin-bottom: 8px; }
-    .card-game h3 { margin: 5px 0; color: var(--duo-green); font-size: 1.2rem; font-weight: 800; }
+    .card-game .icon { font-size: 2.5rem; display: block; margin-bottom: 5px; }
+    .card-game h3 { margin: 4px 0; color: var(--duo-green); font-size: 1.1rem; font-weight: 800; }
+    .card-game p { margin: 0; font-size: 0.8rem; color: #777; }
 
     .progress-container { width: 100%; background-color: var(--duo-border); border-radius: 12px; height: 16px; margin: 15px 0; overflow: hidden; }
     .progress-bar { height: 100%; background-color: var(--duo-green); width: 0%; transition: width 0.3s ease; border-radius: 12px; }
 
-    .calligraphy-keyboard-input { font-size: 2.2rem; text-align: center; width: 100%; max-width: 400px; padding: 12px; border: 3px solid var(--duo-border); border-radius: 16px; outline: none; background: white; letter-spacing: 3px; }
-    .hint-box { background: #e5f6ff; border: 2px dashed var(--duo-blue); color: var(--duo-blue-dark); padding: 10px 15px; border-radius: 14px; font-weight: bold; font-size: 1.2rem; letter-spacing: 4px; margin: 10px auto; display: inline-block; }
+    .calligraphy-keyboard-input { font-size: 1.8rem; text-align: center; width: 100%; max-width: 400px; padding: 10px; border: 3px solid var(--duo-border); border-radius: 16px; outline: none; background: white; letter-spacing: 2px; }
+    .hint-box { background: #e5f6ff; border: 2px dashed var(--duo-blue); color: var(--duo-blue-dark); padding: 8px 12px; border-radius: 14px; font-weight: bold; font-size: 1.1rem; letter-spacing: 3px; margin: 10px auto; display: inline-block; }
 
-    .canvas-container { border: 3px dashed var(--duo-green); border-radius: 16px; display: inline-block; background: #ffffff; margin: 15px 0; touch-action: none; position: relative; max-width: 100%; }
+    .canvas-container { border: 3px dashed var(--duo-green); border-radius: 16px; display: inline-block; background: #ffffff; margin: 10px 0; touch-action: none; position: relative; max-width: 100%; }
     .canvas-container.blackboard { background: #2b3a42; border-color: #1a252f; }
     canvas { display: block; border-radius: 12px; cursor: crosshair; max-width: 100%; }
 
-    button.btn { padding: 14px 22px; font-size: 1rem; font-weight: 800; border: none; border-radius: 16px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.8px; transition: all 0.1s ease; }
+    button.btn { padding: 12px 18px; font-size: 0.95rem; font-weight: 800; border: none; border-radius: 16px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.1s ease; }
     .btn-success { background: var(--duo-green); color: white; box-shadow: 0 4px 0 var(--duo-green-dark); }
     .btn-action { background: var(--duo-blue); color: white; box-shadow: 0 4px 0 var(--duo-blue-dark); }
+    .btn-purple { background: var(--duo-purple); color: white; box-shadow: 0 4px 0 var(--duo-purple-dark); }
     .btn-back { background: white; border: 2px solid var(--duo-border); color: var(--duo-gray); box-shadow: 0 4px 0 var(--duo-border); }
-    .btn-audio { background: white; border: 2px solid var(--duo-blue); color: var(--duo-blue); font-size: 1.1rem; padding: 10px 20px; border-radius: 16px; cursor: pointer; box-shadow: 0 4px 0 var(--duo-blue); font-weight: bold; }
+    .btn-audio { background: white; border: 2px solid var(--duo-blue); color: var(--duo-blue); font-size: 1rem; padding: 8px 16px; border-radius: 14px; cursor: pointer; box-shadow: 0 4px 0 var(--duo-blue); font-weight: bold; }
 
     .fullscreen-modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #1a252f; z-index: 1000; flex-direction: column; align-items: center; justify-content: space-between; padding: 15px; }
     .fullscreen-modal.active { display: flex; }
     .fullscreen-header { width: 100%; display: flex; justify-content: space-between; align-items: center; color: white; }
-    .fullscreen-controls { display: flex; gap: 10px; align-items: center; background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; margin-bottom: 10px; flex-wrap: wrap; }
+    .fullscreen-controls { display: flex; gap: 8px; align-items: center; background: rgba(255,255,255,0.1); padding: 8px 14px; border-radius: 18px; margin-bottom: 5px; flex-wrap: wrap; justify-content: center; }
 
-    .vertical-math { font-size: 2.8rem; font-weight: bold; color: var(--duo-green); letter-spacing: 2px; }
-    .math-input { font-size: 2.2rem; width: 180px; text-align: center; border: 3px solid var(--duo-green); border-radius: 14px; padding: 5px; outline: none; }
+    .vertical-math { font-size: 2.5rem; font-weight: bold; color: var(--duo-green); letter-spacing: 2px; }
+    .math-input { font-size: 2rem; width: 160px; text-align: center; border: 3px solid var(--duo-green); border-radius: 14px; padding: 5px; outline: none; }
 
-    .controls { display: flex; justify-content: center; gap: 12px; margin-top: 15px; flex-wrap: wrap; }
-    .highlight { color: var(--duo-green); font-size: 2.2rem; font-weight: 800; text-decoration: underline; }
+    .controls { display: flex; justify-content: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+    .highlight { color: var(--duo-green); font-size: 2rem; font-weight: 800; text-decoration: underline; }
 
-    .user-list-admin { list-style: none; padding: 0; text-align: left; }
-    .user-list-admin li { background: #f7f7f7; padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--duo-border); }
+    .user-list-admin { list-style: none; padding: 0; text-align: left; margin-top: 10px; }
+    .user-list-admin li { background: #f7f7f7; padding: 10px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--duo-border); flex-wrap: wrap; gap: 6px; }
+
+    .reward-item-admin {
+      background: #fdf8ff; border: 2px solid var(--duo-purple); border-radius: 14px;
+      padding: 10px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
 
     .level-modal {
       display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -94,9 +105,10 @@
     <div id="header-user-info" class="user-badge" style="display: none;">
       <span id="user-name">Élève</span> | Niv. <span id="user-level">1</span> ⭐ <span id="user-xp">0</span> XP
     </div>
-    <div>
-      <a href="progression.html" class="btn-header" style="margin-right:5px;">📊 Progression</a>
-      <a href="collection.html" class="btn-header" style="margin-right:5px;">🃏 Collection</a>
+    <div class="nav-buttons">
+      <a href="progression.html" class="btn-header">📊 Parcours</a>
+      <a href="collection.html" class="btn-header">🃏 Collection</a>
+      <a href="boutique.html" class="btn-header" style="background: #fff3d8; border-color: var(--duo-yellow);">📚 BD</a>
       <button onclick="showScreen('admin-screen')" class="btn-header">⚙️ Admin</button>
       <button id="btn-logout" onclick="logout()" class="btn-header" style="display: none;">🚪</button>
     </div>
@@ -104,7 +116,7 @@
 
   <section id="login-screen" class="screen active">
     <h2>👋 C'est parti !</h2>
-    <p>Choisis ton profil pour étudier :</p>
+    <p style="color:#666;">Choisis ton profil pour commencer :</p>
 
     <div class="duo-card">
       <form onsubmit="event.preventDefault(); login();">
@@ -120,7 +132,7 @@
           <input type="password" id="login-password" placeholder="Ex: 123" autocomplete="current-password" required>
         </div>
 
-        <button type="submit" class="btn btn-success" style="width: 100%; font-size: 1.1rem; margin-top: 10px;">🚀 SE CONNECTER</button>
+        <button type="submit" class="btn btn-success" style="width: 100%; font-size: 1.05rem; margin-top: 10px;">🚀 SE CONNECTER</button>
       </form>
     </div>
   </section>
@@ -160,7 +172,7 @@
         </select>
       </div>
 
-      <button onclick="launchCalligraphyGame()" class="btn btn-success" style="width: 100%; font-size: 1.1rem; margin-top: 10px;">▶️ COMMENCER</button>
+      <button onclick="launchCalligraphyGame()" class="btn btn-success" style="width: 100%; font-size: 1.05rem; margin-top: 10px;">▶️ COMMENCER</button>
     </div>
   </section>
 
@@ -186,14 +198,14 @@
     </div>
 
     <div class="controls">
-      <button onclick="validateCalligraphy()" class="btn btn-success" style="width: 100%; font-size: 1.2rem;">✅ VALIDER (+10 XP)</button>
+      <button onclick="validateCalligraphy()" class="btn btn-success" style="width: 100%; font-size: 1.1rem;">✅ VALIDER (+10 XP)</button>
     </div>
   </section>
 
   <section id="math-screen" class="screen">
     <button onclick="showScreen('main-menu')" class="btn btn-back">⬅️ Menu</button>
     
-    <div style="margin-bottom: 15px;">
+    <div style="margin-bottom: 12px; margin-top: 10px;">
       <label><b>Niveau :</b> </label>
       <select id="math-diff" style="padding: 6px; font-weight: bold; border-radius: 10px;" onchange="generateMathProblem()">
         <option value="dizaines">Dizaines (10 à 99)</option>
@@ -202,18 +214,18 @@
       </select>
     </div>
 
-    <div style="background: white; padding: 20px; border-radius: 20px; border: 2px solid var(--duo-border); display: inline-block; box-shadow: 0 4px 0 var(--duo-border);">
+    <div style="background: white; padding: 18px; border-radius: 20px; border: 2px solid var(--duo-border); display: inline-block; box-shadow: 0 4px 0 var(--duo-border);">
       <div id="math-problem" class="vertical-math">-- - -- =</div>
       <input type="number" id="math-answer" placeholder="?" class="math-input">
     </div>
 
     <div style="display: flex; justify-content: space-between; align-items: center; max-width: 600px; margin: 15px auto 5px auto;">
-      <h3>📝 Brouillon :</h3>
+      <h3 style="margin:0;">📝 Brouillon :</h3>
       <button onclick="openFullscreenScratch()" class="btn btn-action">🔍 Plein Écran</button>
     </div>
 
     <div class="canvas-container blackboard">
-      <canvas id="scratch-canvas" width="600" height="300"></canvas>
+      <canvas id="scratch-canvas" width="600" height="260"></canvas>
     </div>
 
     <div class="controls">
@@ -224,8 +236,8 @@
 
   <div id="fullscreen-modal" class="fullscreen-modal">
     <div class="fullscreen-header">
-      <span style="font-size: 1.2rem; font-weight: bold;">📝 Tableau de Brouillon</span>
-      <button onclick="closeFullscreenScratch()" class="btn btn-back" style="margin: 0;">❌ Fermer</button>
+      <span style="font-size: 1.1rem; font-weight: bold;">📝 Tableau de Brouillon</span>
+      <button onclick="closeFullscreenScratch()" class="btn btn-back" style="margin: 0; padding: 6px 12px;">❌ Fermer</button>
     </div>
 
     <div class="canvas-container blackboard" style="margin: 10px 0; flex: 1; width: 100%; display: flex; justify-content: center; align-items: center;">
@@ -243,19 +255,58 @@
 
   <div id="level-modal" class="level-modal">
     <div class="level-card">
-      <div style="font-size: 4.5rem; margin-bottom: 5px;">🌟</div>
-      <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--duo-green); margin: 5px 0;">NIVEAU SUPÉRIEUR !</h2>
-      <p style="font-size: 1.1rem; color: #555;">Bravo ! Tu es maintenant <b>Niveau <span id="level-modal-num">2</span></b> !</p>
-      <p style="color: #777; font-size: 0.95rem;">🗺️ Va dans l'onglet <b>Progression</b> pour avancer sur ton arbre hebdomadaire !</p>
+      <div style="font-size: 4rem; margin-bottom: 5px;">🌟</div>
+      <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--duo-green); margin: 5px 0;">NIVEAU SUPÉRIEUR !</h2>
+      <p style="font-size: 1rem; color: #555;">Bravo ! Tu es maintenant <b>Niveau <span id="level-modal-num">2</span></b> !</p>
+      <p style="color: #777; font-size: 0.9rem;">🗺️ Va dans l'onglet <b>Parcours</b> pour avancer sur ton arbre hebdomadaire !</p>
 
       <button onclick="document.getElementById('level-modal').classList.remove('active')" class="btn btn-success" style="width: 100%; margin-top: 15px;">CONTINUER ! 🚀</button>
     </div>
   </div>
 
+  <!-- PANNEAU ADMINISTRATEUR & GESTION PARENTS -->
   <section id="admin-screen" class="screen">
     <button onclick="showScreen('main-menu')" class="btn btn-back">⬅️ Menu</button>
-    <h2>⚙️ Panneau Administrateur</h2>
+    <h2 style="margin-bottom:5px;">⚙️ Panneau Administrateur</h2>
 
+    <!-- GESTION DES RÉCOMPENSES ULTIMES PARENTS -->
+    <div class="duo-card" style="border-color: var(--duo-purple);">
+      <h3 style="margin-top:0; color: var(--duo-purple);">🎁 Récompenses Ultimes (Parents)</h3>
+      <p style="font-size:0.85rem; color:#666;">Configure ici les récompenses au choix débloquées au bout du parcours hebdomadaire !</p>
+      
+      <div class="form-group">
+        <label>Titre de la récompense :</label>
+        <input type="text" id="admin-reward-title" placeholder="Ex: Soirée Pizza / 1h de Console / Sortie Cinéma">
+      </div>
+      <div class="form-group">
+        <label>Description :</label>
+        <input type="text" id="admin-reward-desc" placeholder="Ex: Valable pour 1 soirée au choix ce mois-ci">
+      </div>
+      <div class="form-group">
+        <label>Icône (Emoji) :</label>
+        <input type="text" id="admin-reward-icon" value="🎁">
+      </div>
+
+      <button onclick="addUltimateReward()" class="btn btn-purple" style="width: 100%; margin-bottom: 15px;">➕ AJOUTER LA RÉCOMPENSE</button>
+
+      <h4>Récompenses configurées :</h4>
+      <div id="admin-rewards-list"></div>
+
+      <hr style="border:0; border-top: 1px dashed var(--duo-border); margin: 15px 0;">
+
+      <h4 style="color: var(--duo-red);">🎟️ Marquer une récompense comme UTILISÉE :</h4>
+      <div class="form-group">
+        <label>1. Sélectionne l'élève :</label>
+        <select id="admin-consume-user-select" onchange="renderUserClaimedRewardsSelect()"></select>
+      </div>
+      <div class="form-group">
+        <label>2. Sélectionne la récompense à consommer :</label>
+        <select id="admin-consume-reward-select"></select>
+      </div>
+      <button onclick="consumeStudentReward()" class="btn" style="background: var(--duo-red); color: white; width: 100%;">✔️ VALIDER L'UTILISATION (SUPPRIMER DE SA COLLECTION)</button>
+    </div>
+
+    <!-- GESTION DES LISTES DE MOTS -->
     <div class="duo-card">
       <h3>📚 Listes de Mots</h3>
       <div class="form-group">
@@ -270,7 +321,7 @@
       </div>
 
       <h4>Mots de la liste :</h4>
-      <div class="form-group" style="display: flex; gap: 10px;">
+      <div class="form-group" style="display: flex; gap: 8px;">
         <input type="text" id="admin-new-word-input" placeholder="Nouveau mot...">
         <button onclick="addWordToCurrentList()" class="btn btn-success">Ajouter</button>
       </div>
@@ -278,16 +329,18 @@
       <ul id="admin-words-ul" class="user-list-admin"></ul>
     </div>
 
-    <div class="duo-card" style="margin-top: 20px;">
+    <!-- PHRASES D'ÉCHEC -->
+    <div class="duo-card" style="margin-top: 15px;">
       <h3>💬 Phrases d'échec</h3>
-      <div class="form-group" style="display: flex; gap: 10px;">
+      <div class="form-group" style="display: flex; gap: 8px;">
         <input type="text" id="admin-new-phrase-input" placeholder="Ex: Regarde bien et réessaie...">
         <button onclick="addFailurePhrase()" class="btn btn-success">Ajouter</button>
       </div>
       <ul id="admin-phrases-ul" class="user-list-admin"></ul>
     </div>
 
-    <div class="duo-card" style="margin-top: 20px;">
+    <!-- ÉLÈVES -->
+    <div class="duo-card" style="margin-top: 15px;">
       <h3>👥 Élèves</h3>
       <div class="form-group"><label>Nom :</label><input type="text" id="admin-user-name" placeholder="Nom"></div>
       <div class="form-group"><label>PIN :</label><input type="text" id="admin-user-pin" value="123"></div>
@@ -304,6 +357,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbzvnpPtigFMouPGLFQNlxg6ZvvIK-zLAbDUqMIsncBSHTzKuIOeSWfOlty0tXJ_-Sex-A/exec";
 
     let usersList = [];
+    let rewardsList = [];
     let wordListsData = { "Semaine 1": ["âge", "argent", "danger", "gagner", "garder", "genre"] };
     let failurePhrases = ["Oups ! Regarde bien le mot et réessaie !", "Presque ! Tu vas y arriver !", "Ne t'inquiète pas, réessaie !"];
 
@@ -394,6 +448,7 @@
             pin: (u.pin || u.Pin || "123").toString(),
             niveau: parseInt(u.niveau || u.Niveau || 1) || 1,
             xp: parseInt(u.xp || u.XP || 0) || 0,
+            argent: parseInt(u.argent || u.Argent || 0) || 0,
             mots_difficultes: safeJsonParse(u.mots_difficultes, []),
             cards_collection: safeJsonParse(u.cards_collection, []),
             card_preference: u.card_preference || u.Card_Preference || "both",
@@ -401,6 +456,10 @@
             tree_week_id: u.tree_week_id || u.Tree_Week_ID || "",
             weekly_tree: safeJsonParse(u.weekly_tree, [])
           }));
+        }
+
+        if (data && data.rewards) {
+          rewardsList = data.rewards;
         }
 
         if (data && data.words && data.words.length > 0) {
@@ -631,7 +690,7 @@
       const modal = document.getElementById('fullscreen-modal');
       if (modal) modal.classList.add('active');
       const canvas = document.getElementById('fullscreen-scratch-canvas');
-      if (canvas) { canvas.width = window.innerWidth - 40; canvas.height = window.innerHeight - 150; }
+      if (canvas) { canvas.width = window.innerWidth - 30; canvas.height = window.innerHeight - 140; }
       loadScratchPage(currentScratchPage);
     }
 
@@ -733,6 +792,149 @@
       renderAdminListWords();
       renderAdminPhrases();
       renderAdminUsers();
+      renderAdminRewards();
+      populateConsumeUserSelect();
+    }
+
+    /* GESTION DES RÉCOMPENSES ULTIMES (PARENTS) */
+    function renderAdminRewards() {
+      const container = document.getElementById('admin-rewards-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (rewardsList.length === 0) {
+        container.innerHTML = '<p style="font-size:0.85rem; color:#888;">Aucune récompense créée.</p>';
+        return;
+      }
+
+      rewardsList.forEach((r, idx) => {
+        const div = document.createElement('div');
+        div.className = 'reward-item-admin';
+        div.innerHTML = `
+          <div>
+            <b>${r.icon || '🎁'} ${r.title}</b>
+            <small style="display:block; color:#666;">${r.description || ''}</small>
+          </div>
+          <button onclick="deleteUltimateReward(${idx})" class="btn" style="background:var(--duo-red); color:white; padding:4px 8px; font-size:0.8rem;">❌</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function addUltimateReward() {
+      const title = document.getElementById('admin-reward-title').value.trim();
+      const desc = document.getElementById('admin-reward-desc').value.trim();
+      const icon = document.getElementById('admin-reward-icon').value.trim() || "🎁";
+
+      if (!title) return alert("Saisis au moins un titre !");
+
+      rewardsList.push({
+        id: Date.now().toString(),
+        title: title,
+        description: desc,
+        icon: icon
+      });
+
+      document.getElementById('admin-reward-title').value = '';
+      document.getElementById('admin-reward-desc').value = '';
+
+      renderAdminRewards();
+      await saveRewardsToSheets();
+      alert("🎉 Récompense ajoutée avec succès !");
+    }
+
+    async function deleteUltimateReward(idx) {
+      rewardsList.splice(idx, 1);
+      renderAdminRewards();
+      await saveRewardsToSheets();
+    }
+
+    async function saveRewardsToSheets() {
+      try {
+        await fetch(API_URL, {
+          method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'saveRewards', rewards: rewardsList })
+        });
+      } catch (e) {}
+    }
+
+    function populateConsumeUserSelect() {
+      const select = document.getElementById('admin-consume-user-select');
+      if (!select) return;
+      select.innerHTML = '<option value="">-- Choisis un élève --</option>';
+
+      usersList.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.id;
+        opt.innerText = u.nom;
+        select.appendChild(opt);
+      });
+
+      renderUserClaimedRewardsSelect();
+    }
+
+    function renderUserClaimedRewardsSelect() {
+      const userId = document.getElementById('admin-consume-user-select').value;
+      const selectReward = document.getElementById('admin-consume-reward-select');
+      if (!selectReward) return;
+
+      selectReward.innerHTML = '';
+
+      if (!userId) {
+        selectReward.innerHTML = '<option value="">-- Sélectionne d\'abord un élève --</option>';
+        return;
+      }
+
+      const user = usersList.find(u => u.id.toString() === userId.toString());
+      if (!user || !user.cards_collection) {
+        selectReward.innerHTML = '<option value="">Aucune récompense dans sa collection</option>';
+        return;
+      }
+
+      const userRewards = user.cards_collection.filter(c => c.type === "Récompense Ultime");
+
+      if (userRewards.length === 0) {
+        selectReward.innerHTML = '<option value="">Cet élève n\'a pas de récompense ultime disponible</option>';
+        return;
+      }
+
+      userRewards.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.name;
+        opt.innerText = `🎁 ${r.name}`;
+        selectReward.appendChild(opt);
+      });
+    }
+
+    async function consumeStudentReward() {
+      const userId = document.getElementById('admin-consume-user-select').value;
+      const rewardName = document.getElementById('admin-consume-reward-select').value;
+
+      if (!userId || !rewardName) {
+        return alert("Sélectionne un élève et une récompense à consommer !");
+      }
+
+      if (!confirm(`Es-tu sûr(e) de marquer "${rewardName}" comme UTILISÉE ? Elle sera retirée de la collection de l'élève !`)) {
+        return;
+      }
+
+      try {
+        await fetch(API_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'useReward',
+            userId: userId,
+            rewardName: rewardName
+          })
+        });
+
+        alert(`✅ La récompense "${rewardName}" a été consommée avec succès !`);
+        await loadDataFromSheets();
+      } catch (e) {
+        alert("Erreur lors de la suppression de la récompense.");
+      }
     }
 
     function renderAdminListSelect() {
@@ -907,6 +1109,7 @@
         pin, 
         niveau: level, 
         xp, 
+        argent: existing ? (existing.argent || 0) : 0,
         mots_difficultes: existing ? safeJsonParse(existing.mots_difficultes, []) : [],
         cards_collection: existing ? safeJsonParse(existing.cards_collection, []) : [],
         card_preference: existing ? (existing.card_preference || "both") : "both",

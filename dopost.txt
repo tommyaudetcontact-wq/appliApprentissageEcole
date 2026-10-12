@@ -1,0 +1,275 @@
+function doGet(e) {
+  var action = e.parameter ? e.parameter.action : "getData";
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  
+  if (action === "getData") {
+    // 1. Charger les Utilisateurs
+    var sheetUsers = ss.getSheetByName("Utilisateurs") || ss.getSheetByName("Users") || ss.insertSheet("Utilisateurs");
+    var usersData = sheetUsers.getDataRange().getValues();
+    var users = [];
+    
+    // En-têtes officiels attendus (12 colonnes)
+    var expectedHeaders = ["id", "nom", "pin", "niveau", "xp", "argent", "mots_difficultes", "cards_collection", "card_preference", "weekly_xp", "tree_week_id", "weekly_tree"];
+
+    if (usersData.length > 0) {
+      var startRow = 0;
+      var fileHeaders = expectedHeaders;
+
+      // Détecter si la ligne 0 contient des en-têtes
+      if (typeof usersData[0][1] === 'string' && (usersData[0][1].toLowerCase() === 'nom' || usersData[0][0].toString().toLowerCase() === 'id')) {
+        fileHeaders = usersData[0].map(function(h) { return h.toString().toLowerCase().trim(); });
+        startRow = 1;
+      }
+
+      for (var i = startRow; i < usersData.length; i++) {
+        var row = usersData[i];
+        if (!row[0] && !row[1]) continue;
+        var obj = {};
+
+        for (var j = 0; j < fileHeaders.length; j++) {
+          var hName = fileHeaders[j];
+          if (hName === "nom") obj["nom"] = row[j];
+          else if (hName === "id") obj["id"] = row[j];
+          else if (hName === "pin") obj["pin"] = row[j];
+          else if (hName === "niveau") obj["niveau"] = Number(row[j]) || 0;
+          else if (hName === "xp") obj["xp"] = Number(row[j]) || 0;
+          else if (hName === "argent") obj["argent"] = Number(row[j]) || 0;
+          else if (hName === "mots_difficultes") obj["mots_difficultes"] = row[j];
+          else if (hName === "cards_collection") obj["cards_collection"] = row[j];
+          else if (hName === "card_preference") obj["card_preference"] = row[j];
+          else if (hName === "weekly_xp") obj["weekly_xp"] = Number(row[j]) || 0;
+          else if (hName === "tree_week_id") obj["tree_week_id"] = row[j];
+          else if (hName === "weekly_tree") obj["weekly_tree"] = row[j];
+        }
+        if (obj.nom) users.push(obj);
+      }
+    }
+
+    // 2. Charger les Échanges (Trades)
+    var sheetTrades = ss.getSheetByName("Trades") || ss.insertSheet("Trades");
+    var tradesData = sheetTrades.getDataRange().getValues();
+    var trades = [];
+    if (tradesData.length > 1) {
+      var tHeaders = tradesData[0];
+      for (var k = 1; k < tradesData.length; k++) {
+        var tRow = tradesData[k];
+        var tObj = {};
+        for (var l = 0; l < tHeaders.length; l++) {
+          tObj[tHeaders[l]] = tRow[l];
+        }
+        trades.push(tObj);
+      }
+    }
+
+    // 3. Charger les Mots
+    var sheetWords = ss.getSheetByName("Mots") || ss.getSheetByName("Words") || ss.insertSheet("Mots");
+    var wordsData = sheetWords.getDataRange().getValues();
+    var words = [];
+    if (wordsData.length > 1) {
+      var wHeaders = wordsData[0];
+      for (var m = 1; m < wordsData.length; m++) {
+        var wRow = wordsData[m];
+        var wObj = {};
+        for (var n = 0; n < wHeaders.length; n++) {
+          wObj[wHeaders[n]] = wRow[n];
+        }
+        words.push(wObj);
+      }
+    }
+
+    // 4. Charger les Phrases d'échec
+    var sheetPhrases = ss.getSheetByName("Phrases_Echec") || ss.getSheetByName("Phrases") || ss.insertSheet("Phrases_Echec");
+    var phrasesData = sheetPhrases.getDataRange().getValues();
+    var phrases = [];
+    if (phrasesData.length > 1) {
+      var pHeaders = phrasesData[0];
+      for (var p = 1; p < phrasesData.length; p++) {
+        var pRow = phrasesData[p];
+        var pObj = {};
+        for (var q = 0; q < pHeaders.length; q++) {
+          pObj[pHeaders[q]] = pRow[q];
+        }
+        phrases.push(pObj);
+      }
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({
+      users: users,
+      trades: trades,
+      words: words,
+      phrases: phrases
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doPost(e) {
+  var data = JSON.parse(e.postData.contents);
+  var action = data.action;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // ÉCHANGE ATOMIQUE SÉCURISÉ
+  if (action === "acceptTrade") {
+    var lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (err) {
+      return ContentService.createTextOutput("LOCK_ERROR").setMimeType(ContentService.MimeType.TEXT);
+    }
+
+    var sheetU = ss.getSheetByName("Utilisateurs") || ss.getSheetByName("Users");
+    var sheetT = ss.getSheetByName("Trades");
+
+    var tradeId = data.tradeId;
+    var buyerId = data.buyerId;
+    var cardGivenByBuyer = data.cardGiven;
+
+    var uValues = sheetU.getDataRange().getValues();
+    var headers = uValues[0].map(function(h) { return h.toString().toLowerCase().trim(); });
+    var idCol = headers.indexOf("id");
+    var cardsCol = headers.indexOf("cards_collection");
+
+    var tValues = sheetT.getDataRange().getValues();
+    var tradeRowIndex = -1;
+    var tradeObj = null;
+
+    for (var i = 1; i < tValues.length; i++) {
+      if (tValues[i][0] && tValues[i][0].toString() === tradeId.toString()) {
+        tradeRowIndex = i + 1;
+        tradeObj = {
+          id: tValues[i][0],
+          ownerId: tValues[i][1],
+          offeredCard: typeof tValues[i][4] === 'string' ? JSON.parse(tValues[i][4]) : tValues[i][4]
+        };
+        break;
+      }
+    }
+
+    if (tradeObj && idCol !== -1 && cardsCol !== -1) {
+      var ownerId = tradeObj.ownerId;
+      var cardOfferedByOwner = tradeObj.offeredCard;
+
+      var ownerRowIndex = -1;
+      var buyerRowIndex = -1;
+      var ownerCards = [];
+      var buyerCards = [];
+
+      for (var j = 1; j < uValues.length; j++) {
+        var rowId = uValues[j][idCol].toString();
+        if (rowId === ownerId.toString()) {
+          ownerRowIndex = j + 1;
+          try { ownerCards = JSON.parse(uValues[j][cardsCol] || "[]"); } catch(ex) { ownerCards = []; }
+        }
+        if (rowId === buyerId.toString()) {
+          buyerRowIndex = j + 1;
+          try { buyerCards = JSON.parse(uValues[j][cardsCol] || "[]"); } catch(ex) { buyerCards = []; }
+        }
+      }
+
+      if (ownerRowIndex > 0 && buyerRowIndex > 0) {
+        var idxOwner = ownerCards.findIndex(function(c) {
+          return (c.id && cardOfferedByOwner.id && c.id === cardOfferedByOwner.id) ||
+                 (c.name && cardOfferedByOwner.name && c.name.toLowerCase() === cardOfferedByOwner.name.toLowerCase());
+        });
+        if (idxOwner !== -1) ownerCards.splice(idxOwner, 1);
+        ownerCards.push(cardGivenByBuyer);
+
+        var idxBuyer = buyerCards.findIndex(function(c) {
+          return (c.id && cardGivenByBuyer.id && c.id === cardGivenByBuyer.id) ||
+                 (c.name && cardGivenByBuyer.name && c.name.toLowerCase() === cardGivenByBuyer.name.toLowerCase());
+        });
+        if (idxBuyer !== -1) buyerCards.splice(idxBuyer, 1);
+        buyerCards.push(cardOfferedByOwner);
+
+        sheetU.getRange(ownerRowIndex, cardsCol + 1).setValue(JSON.stringify(ownerCards));
+        sheetU.getRange(buyerRowIndex, cardsCol + 1).setValue(JSON.stringify(buyerCards));
+
+        sheetT.deleteRow(tradeRowIndex);
+      }
+    }
+
+    lock.releaseLock();
+    return ContentService.createTextOutput("OK").setMimeType(ContentService.MimeType.TEXT);
+  }
+
+  // SAUVEGARDE UTILISATEUR (RESTRUCTURATION AUTO DES EN-TÊTES)
+  if (action === "saveUser") {
+    var sheet = ss.getSheetByName("Utilisateurs") || ss.getSheetByName("Users") || ss.insertSheet("Utilisateurs");
+    var values = sheet.getDataRange().getValues();
+    var headers = ["id", "nom", "pin", "niveau", "xp", "argent", "mots_difficultes", "cards_collection", "card_preference", "weekly_xp", "tree_week_id", "weekly_tree"];
+    
+    // S'assurer que la ligne 1 contient exactement nos 12 colonnes standard
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+
+    var rowIndex = -1;
+    for (var i = 1; i < values.length; i++) {
+      if (values[i][0] && values[i][0].toString() === data.id.toString()) {
+        rowIndex = i + 1;
+        break;
+      }
+    }
+
+    var rowData = [
+      data.id,
+      data.nom,
+      data.pin,
+      Number(data.niveau) || 0,
+      Number(data.xp) || 0,
+      Number(data.argent) || 0,
+      typeof data.mots_difficultes === 'object' ? JSON.stringify(data.mots_difficultes || []) : data.mots_difficultes,
+      typeof data.cards_collection === 'object' ? JSON.stringify(data.cards_collection || []) : data.cards_collection,
+      data.card_preference || "both",
+      Number(data.weekly_xp) || 0,
+      data.tree_week_id || "",
+      typeof data.weekly_tree === 'object' ? JSON.stringify(data.weekly_tree || []) : data.weekly_tree
+    ];
+
+    if (rowIndex > 0) {
+      sheet.getRange(rowIndex, 1, 1, rowData.length).setValues([rowData]);
+    } else {
+      sheet.appendRow(rowData);
+    }
+  }
+
+  if (action === "saveTrades") {
+    var sheetT = ss.getSheetByName("Trades") || ss.insertSheet("Trades");
+    sheetT.clear();
+    sheetT.appendRow(["id", "ownerId", "ownerName", "targetUserId", "offeredCard", "requestedCardName"]);
+    
+    if (data.trades && data.trades.length > 0) {
+      data.trades.forEach(function(t) {
+        sheetT.appendRow([
+          t.id,
+          t.ownerId,
+          t.ownerName,
+          t.targetUserId,
+          typeof t.offeredCard === 'object' ? JSON.stringify(t.offeredCard) : t.offeredCard,
+          t.requestedCardName
+        ]);
+      });
+    }
+  }
+
+  if (action === "saveWordList") {
+    var sheetW = ss.getSheetByName("Mots") || ss.getSheetByName("Words") || ss.insertSheet("Mots");
+    sheetW.clear();
+    sheetW.appendRow(["id", "Semaine", "Mot"]);
+    if (data.words && data.words.length > 0) {
+      data.words.forEach(function(w, idx) {
+        sheetW.appendRow([Date.now() + idx, w.semaine, w.mot]);
+      });
+    }
+  }
+
+  if (action === "savePhrases") {
+    var sheetP = ss.getSheetByName("Phrases_Echec") || ss.getSheetByName("Phrases") || ss.insertSheet("Phrases_Echec");
+    sheetP.clear();
+    sheetP.appendRow(["id", "phrase"]);
+    if (data.phrases && data.phrases.length > 0) {
+      data.phrases.forEach(function(p, idx) {
+        sheetP.appendRow([Date.now() + idx, typeof p === 'object' ? p.phrase : p]);
+      });
+    }
+  }
+
+  return ContentService.createTextOutput("OK").setMimeType(ContentService.MimeType.TEXT);
+}
